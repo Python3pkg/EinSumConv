@@ -1,5 +1,11 @@
 delta=Function('delta') #kronicer deltat, en function som ska ha två dummis som imput.
 
+def printStructure(x):
+    if getattr(x, 'args', []):
+        return type(x).__name__ + "(" + ", ".join([printStructure(xa) for xa in x.args]) + ")"
+    else:
+        return str(x)
+
 def flatten(x):
     result = []
     for el in x:
