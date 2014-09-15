@@ -1,3 +1,5 @@
+from sympy import *
+
 delta=Function('delta') #kronicer deltat, en function som ska ha två dummis som imput.
 
 def printStructure(x):
