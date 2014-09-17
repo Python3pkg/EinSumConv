@@ -36,12 +36,12 @@ def getNames_a_aa_aaa():
             yield name
         N=N+1
   
-def getSymbols(symbolDict={},names=None,cls=Symbol):
+def getSymbols(Dict={},names=None,cls=Symbol):
     if names is None:
-        names = getNames_aa_ab_ac()
+        names = getNames_a_aa_aaa()
     for name in names:
-        symbolDict[name]=cls(name)
-        yield symbolDict[name]
+        Dict[name]=cls(name)
+        yield Dict[name]
 
 def getDummy(*arg, **kw):
 	return getSymbols( cls=Dummy, *arg, **kw)
