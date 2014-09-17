@@ -48,6 +48,13 @@ class AppliedTensor(AppliedUndef,Tensor):
             obj._args = ()
             obj.index = tuple(map(sympify, args))
         return obj
+
+    def withNewIndex(self,*index):
+        if not self.args:
+            return type(self)(*index)
+        l=list(index)
+        l.extend(self.args)
+        return type(slef)(*l)
         
     @property
     def indexAndArgs(self):
@@ -87,11 +94,4 @@ Example2: To get the tensor $T_{a,b}(x,y)$, witie:
 It is suggested to ouse the class Dummy for indecis and the class Symbol for ordinary variables, to keep them appart.
 '''
 
-#Special tesors
 
-class Delta(AppliedTensor):
-    pass
-  
-    
-class Eps(AppliedTensor):
-    pass
