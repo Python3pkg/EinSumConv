@@ -40,10 +40,8 @@ class AppliedTensor(AppliedUndef,Tensor):
         obj = object.__new__(cls)
         obj._assumptions = cls.default_assumptions
         obj._mhash = None  # will be set by __hash__ method.
-        print args
 
         if isinstance(args[0], tuple):
-            print 'yes'
             obj.index = tuple(map(sympify, args[0]))
             obj._args= tuple(map(sympify, args[1:]))
         else:
@@ -59,13 +57,20 @@ class AppliedTensor(AppliedUndef,Tensor):
         l.extend(self.args)
         return tuple(l)
 
+    def __unicode__(self):
+        return type(self).__name__ + unicode(self.indexAndArgs)
+
     def __str__(self):
         return type(self).__name__ + str(self.indexAndArgs)
 
     def __repr__(self):
         return type(self).__name__ + repr(self.indexAndArgs)
 
+    def __eq__(self, other):
+        return type(self)==type(other) and self.indexAndArgs==other.indexAndArgs
 
+    def __hash__(self):
+        return hash(str(self))
 
 '''
 Tensor is a copy of the contruction of Function with the addition .index() and .is_tensor
