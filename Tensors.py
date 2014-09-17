@@ -9,34 +9,39 @@ class Tensor(Function):
         # Handle calls like Tensor('F')
         if cls is Tensor:
             return UndefinedTensor(*args, **options)
+    
+    __slots__ = ['_mhash',              # hash value
+                 '_args',               # arguments
+                 '_assumptions'
+                 'index'               # idecis
+                ]
+
         
 class UndefinedTensor(UndefinedFunction):
+
     def __new__(mcl, name, **kwargs):
         ret = BasicMeta.__new__(mcl, name, (AppliedTensor,), kwargs)
         ret.__module__ = None
-        return ret 
-    
-    def __eq__(self, other):
-        return (isinstance(other, self.__class__) and (self.class_key() == other.class_key()))
+        return ret
+
+
+#    def __eq__(self, other):
+#        return (isinstance(other, self.__class__) and (self.class_key() == other.class_key()))
 
 #copy pased with UndefinedFunction -> UndefinedTensor. I have no idea what this does
 #UndefinedTensor.__eq__ = lambda s, o: (isinstance(o, s.__class__) and 
 #   
 
-class AppliedTensor(AppliedUndef):
-    def __new__(cls, *args, **options):
-        args = list(map(sympify, args))
-        obj = super(AppliedTensor, cls).__new__(cls, *args, **options)
+class AppliedTensor(AppliedUndef,Tensor):
+    def __new__(cls, index, *args):
+        obj = object.__new__(cls)
+        obj._assumptions = cls.default_assumptions
+        obj._mhash = None  # will be set by __hash__ method.
+        
+        obj._args = tuple(map(sympify, args))  # all items in args must be Basic objects
+        obj.index = tuple(map(sympify, index))
         return obj
-    
-    def __init__(self,*args,**options):
-        self.index=args[0]
-        self.is_Tensor=True
-    
 
-    
-#    def index(self):
-#        return self.args[0]
     
 
 '''
