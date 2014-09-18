@@ -26,7 +26,11 @@ def newIndexFactorList(factorList, indexGenerator):
 def newIndexTermList(termList):
     indexList=[]
     indexGenerator=namingSymbols.getNewDummys(List=indexList)
-    return [newIndexFactorList(factorList, namingSymbols.getNext(indexList, indexGenerator)) for factorList in termList]
+    return [newIndexFactorList(factorList,
+                               namingSymbols.getNext(indexList,
+                                                     indexGenerator))
+            for factorList
+            in termList]
     
     
 

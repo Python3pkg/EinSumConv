@@ -45,4 +45,7 @@ def contractAllKroneckerDeltas(factorList, *arg, **kw):
         factorList=newFactorList
 
 def contractDeltas(x, *arg, **kw):
-    return sympy.Add(*[sympy.Mul(*contractAllKroneckerDeltas(factorList, *arg, **kw)) for factorList in lists.makeTermList(x)])
+    return sympy.Add(*[sympy.Mul(*contractAllKroneckerDeltas(
+                                      factorList, *arg, **kw)) 
+                       for factorList 
+                       in lists.makeTermList(x)])
