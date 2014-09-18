@@ -4,6 +4,9 @@ from sympy.core.core import BasicMeta
 from sympy.core.sympify import sympify
 from sympy.core.expr import Expr
 
+# this is the function used in other operations to check if something is a tensor.
+def isTensor(x):
+    return isinstance(x,Tensor)
 
 class Tensor(Function):
     @cacheit

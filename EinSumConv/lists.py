@@ -1,5 +1,5 @@
 import sympy
-import tensor
+
 
 def printStructure(x):
     if getattr(x, 'args', []):
@@ -30,9 +30,9 @@ def makeFactorList(x):
         for factor in x.args:
             factorList.append(makeFactorList(factor))
         return flatten(factorList)
-    return x
+    return [x]
     
 def makeTermList(x):
     if not isinstance(x,sympy.Add):
-        return x
+        return [[x]]
     return [makeFactorList(term) for term in x.args]
