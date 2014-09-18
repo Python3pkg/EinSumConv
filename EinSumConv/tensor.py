@@ -55,9 +55,9 @@ class AppliedTensor(AppliedUndef,Tensor):
     def withNewIndex(self,*index):
         if not self.args:
             return type(self)(*index)
-        l=list(index)
+        l=[index]
         l.extend(self.args)
-        return type(slef)(*l)
+        return type(self)(*l)
         
     @property
     def indexAndArgs(self):
