@@ -101,8 +101,20 @@ It is suggested to ouse the class Dummy for indecis and the class Symbol for ord
 
 import sympy.printing.str
 
-def stringPrinter_Tensor(self,tensor):
-    return type(tensor).__name__ + str(tensor.indexAndArgs)
+def stringPrinter_Tensor(self,expr):
+    return type(expr).__name__ + str(expr.indexAndArgs)
 
-sympy.printing.str.StrPrinter._print_Tensor=stringPrinter_Tensor
+sympy.printing.str.StrPrinter._print_Tensor = stringPrinter_Tensor
+
+# in ReprPrinter
+#    def _print_Function(self, expr):
+#        r = self._print(expr.func)
+#        r += '(%s)' % ', '.join([self._print(a) for a in expr.args])
+#        return r
+
+# in StringPrinter 
+#   def _print_Function(self, expr):
+#        return expr.func.__name__ + "(%s)" % self.stringify(expr.args, ", ")
+
+# sympy.printing.repr.ReprPrinter._print_Function = reprPrinter_Tensor
     
