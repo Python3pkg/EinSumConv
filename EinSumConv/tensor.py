@@ -70,11 +70,11 @@ class AppliedTensor(AppliedUndef,Tensor):
     def __unicode__(self):
         return type(self).__name__ + unicode(self.indexAndArgs)
 
-    def __str__(self):
-        return type(self).__name__ + str(self.indexAndArgs)
+#    def __str__(self):
+#        return type(self).__name__ + str(self.indexAndArgs)
 
-    def __repr__(self):
-        return type(self).__name__ + repr(self.indexAndArgs)
+#    def __repr__(self):
+#        return type(self).__name__ + repr(self.indexAndArgs)
 
     def __eq__(self, other):
         return type(self)==type(other) and self.indexAndArgs==other.indexAndArgs
@@ -98,3 +98,11 @@ It is suggested to ouse the class Dummy for indecis and the class Symbol for ord
 '''
 
 
+
+import sympy.printing.str
+
+def stringPrinter_Tensor(self,tensor):
+    return type(tensor).__name__ + str(tensor.indexAndArgs)
+
+sympy.printing.str.StrPrinter._print_Tensor=stringPrinter_Tensor
+    
