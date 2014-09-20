@@ -11,8 +11,8 @@ def contractKroneckerDelta(factorList,dim=4):
         if not isinstance(D,Delta):
             continue
         
-        if not len(getattr(D,'index',[]))==2:
-            raise TypeError('Error: delta must have precisly two arguments')
+        if not len(getattr(D,'indices',[]))==2:
+            raise TypeError('Error: delta must have precisly two indices')
         (d1,d2)=D.index
         
         if d1==d2:

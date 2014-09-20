@@ -55,7 +55,7 @@ class AppliedTensor(sympy.Symbol):
         return ret
     is_Tensor = True
 
-    def withNewIndex(self,*indices):
+    def withNewIndex(self,*index):
         return type(self)(*indices)
 
 
