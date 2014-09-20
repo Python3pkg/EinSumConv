@@ -1,5 +1,4 @@
-from delta import Delta, contractDeltas
-from tensor import Tensor
+
 
 def printStructure(x):
     if getattr(x, 'args', []):
