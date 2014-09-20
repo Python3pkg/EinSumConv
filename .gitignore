@@ -7,4 +7,5 @@ share
 *~
 *.pyc
 .ipynb_checkpoints
+*.ipynb
 
