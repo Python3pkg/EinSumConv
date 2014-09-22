@@ -2,6 +2,28 @@ import sympy.core.cache
 # import sympy.core.function
 # import sympy.core.compatibility
 
+
+'''
+Tensor('name') creates a tensor that does not take arguments
+>>> T = Tensor('T')
+>>> T(*index)
+
+TensorFunction creates a teonsr that do take arguments
+>>> TF = TensorFunction('TF')
+>>> TF(*index)(*args)
+
+Both Tensor and TensorFuncton takes any number of indices. Anytning can be an index but it is genarly recomended to use sympy.Dummy or sympy.Symbol.
+
+>>> a=Dymmy('a'), b=Dummy('b)
+>>> isinstance(Tensor('T')(a,b),sympy.Symbol)
+True
+
+>>> a=Dymmy('a'), b=Dummy('b)
+>>> isinstance(TensorFunction('TF')(a,b),sympy.FunctionClass)
+True
+'''
+
+
 # Why doesn't it work to use "import sympy.core.compatibility" and call "with_metaclass" as "sympy.core.compatibility.with_metaclass"?
 from sympy.core.compatibility import with_metaclass
 from sympy.core.function import AppliedUndef, FunctionClass
@@ -12,7 +34,7 @@ from sympy.core.cache import cacheit
 
 # this is the function used in other operations to check if something is a tensor.
 def isTensor(x):
-    return getattr(x,'is_Tensor',False)
+    return getattr(x,'is_Tensor',False) and getattr(x,'index',False)
 
 class TensorFunction(BasicMeta):
     @cacheit
