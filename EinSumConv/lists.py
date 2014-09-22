@@ -43,10 +43,10 @@ def makeTermList(x):
 
 def makeTensorFactorList(factorList):
     ret=[]
-    for (factor,i) in enumerate(factorList):
+    for (i,factor) in enumerate(factorList):
         if tensor.isTensor(factor):
             ret.append([i,
-                        tensorName(factor), 
+                        tensor.tensorName(factor), 
                         list(factor.index), 
                         getattr(factor,'args',None)])
     return ret

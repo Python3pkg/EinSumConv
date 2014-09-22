@@ -12,7 +12,7 @@ TensorFunction creates a teonsr that do take arguments
 >>> TF = TensorFunction('TF')
 >>> TF(*index)(*args)
 
-Both Tensor and TensorFuncton takes any number of indices. Anytning can be an index but it is genarly recomended to use sympy.Dummy or sympy.Symbol.
+Both Tensor and TensorFuncton takes any number of index. Anytning can be an index but it is genarly recomended to use sympy.Dummy or sympy.Symbol.
 
 >>> a=sympy.Dymmy('a'); b=sympy.Dymmy('b')
 >>> isinstance(Tensor('T')(a,b), sympy.Symbol)
@@ -41,6 +41,12 @@ from sympy.core.cache import cacheit
 def isTensor(x):
     return getattr(x,'is_Tensor',False) and getattr(x,'index',False)
 
+def tensorName(x):
+    if isinstance(x,AppliedTensor):
+        return type(x).__name__
+    if isinstance(type(x),AppliedTensorFunction):
+        return type(type(x)).__name__
+
 class TensorFunction(BasicMeta):
     @cacheit
     def __new__(mcl, name, *arg, **kw):
@@ -54,15 +60,15 @@ class AppliedTensorFunction(FunctionClass):
     __metaclass__ = TensorFunction
 
     @cacheit
-    def __new__(mcl, *indices, **kw):
-        name = mcl.__name__ + str(indices)
+    def __new__(mcl, *index, **kw):
+        name = mcl.__name__ + str(index)
         ret = type.__new__(mcl, name, (AppliedUndef,),kw)
-        ret.indices = indices
+        ret.index = index
         return ret
     is_Tensor = True
 
-    def withNewIndex(self,*indices):
-        return type(type(self))(*indices)(*self.args)
+    def withNewIndex(self,*index):
+        return type(type(self))(*index)(*self.args)
 
 class Tensor(ManagedProperties):
     @cacheit
@@ -76,14 +82,14 @@ class AppliedTensor(sympy.Symbol):
 
     @cacheit
     def __new__(cls, *index, **kw):
-        name = cls.__name__ + str(indices)
+        name = cls.__name__ + str(index)
         ret = sympy.Symbol.__new__(cls, name, **kw)  
         ret.index = index
         return ret
     is_Tensor = True
 
     def withNewIndex(self,*index):
-        return type(self)(*indices)
+        return type(self)(*index)
 
 
 
