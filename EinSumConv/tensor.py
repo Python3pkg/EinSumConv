@@ -14,12 +14,17 @@ TensorFunction creates a teonsr that do take arguments
 
 Both Tensor and TensorFuncton takes any number of indices. Anytning can be an index but it is genarly recomended to use sympy.Dummy or sympy.Symbol.
 
->>> a=Dymmy('a'), b=Dummy('b)
->>> isinstance(Tensor('T')(a,b),sympy.Symbol)
+>>> a=sympy.Dymmy('a'); b=sympy.Dymmy('b')
+>>> isinstance(Tensor('T')(a,b), sympy.Symbol)
 True
 
->>> a=Dymmy('a'), b=Dummy('b)
->>> isinstance(TensorFunction('TF')(a,b),sympy.FunctionClass)
+>>> a=sympy.Dymmy('a'); b=sympy.Dymmy('b')
+>>> isinstance(TensorFunction('TF')(a,b), sympy.FunctionClass)
+True
+
+>>> a=sympy.Dymmy('a'); b=sympy.Dummy('b); 
+>>> x=sympy.Symbol('x')
+>>> isinstance(TensorFunction('TF')(a,b)(x), sympy.Function)
 True
 '''
 
@@ -70,10 +75,10 @@ class AppliedTensor(sympy.Symbol):
     __metaclass__ = Tensor
 
     @cacheit
-    def __new__(cls, *indices, **kw):
+    def __new__(cls, *index, **kw):
         name = cls.__name__ + str(indices)
         ret = sympy.Symbol.__new__(cls, name, **kw)  
-        ret.indices = indices
+        ret.index = index
         return ret
     is_Tensor = True
 
