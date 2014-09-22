@@ -1,4 +1,5 @@
 import sympy
+import tensor
 
 
 def printStructure(x):
@@ -33,6 +34,25 @@ def makeFactorList(x):
     return [x]
     
 def makeTermList(x):
+    if isinstance(x,sympy.Mul) or isinstance(x,sympy.Pow):
+        return[makeFactorList(x)]
     if not isinstance(x,sympy.Add):
         return [[x]]
     return [makeFactorList(term) for term in x.args]
+
+
+def makeTensorFactorList(factorList):
+    ret=[]
+    for (factor,i) in enumerate(factorList):
+        if tensor.isTensor(factor):
+            ret.append([i,
+                        tensorName(factor), 
+                        list(factor.index), 
+                        getattr(factor,'args',None)])
+    return ret
+
+
+def makeTensorTermList(x):
+    termList=makeTermList(x)
+    return [makeTensorFactorList(factorList) for factorList in termList]
+    
