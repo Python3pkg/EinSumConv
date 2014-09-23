@@ -52,8 +52,8 @@ def makeTensorFactorList(factorList):
     return ret
 
 
-def makeTensorTermList(x):
-    termList=makeTermList(x)
+def makeTensorTermList(exp):
+    termList=makeTermList(exp)
     return [makeTensorFactorList(factorList) for factorList in termList]
     
 def indexPathern(index):
@@ -68,7 +68,10 @@ def indexPathern(index):
     return pathern
 
 def comprTensorsInList(A,B):
-    if A[1] == B[1]: return 0
+    if A[1] == B[1]: 
+        if indexPathern(A[2]) < indexPathern(B[2]): return -1
+        if indexPathern(A[2]) > indexPathern(B[2]): return 1
+        return 0
     if A[1] == 'Delta': return -1
     if B[1] == 'Delta': return 1
     if A[1] == 'Eps': return -1

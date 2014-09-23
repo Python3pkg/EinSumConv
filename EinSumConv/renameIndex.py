@@ -4,7 +4,13 @@ import namingSymbols
 import sympy
 
 
-def newIndexFactorList(factorList, indexGenerator):
+
+def newIndex_TensorFactorList(tfl, indexGenerator)
+    IndexDict = {}
+    dummyIndexDict = {}
+
+
+def newIndex_FactorList(factorList, indexGenerator):
     indexDict={}
     newFactorList=list(factorList)
     for (i,factor) in enumerate(factorList):
@@ -23,7 +29,7 @@ def newIndexFactorList(factorList, indexGenerator):
 
 
 
-def newIndexTermList(termList):
+def newIndex_TermList(termList):
     indexList=[]
     indexGenerator=namingSymbols.getNewDummys(List=indexList)
     return [newIndexFactorList(factorList,
