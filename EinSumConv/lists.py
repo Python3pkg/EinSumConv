@@ -46,7 +46,7 @@ def makeTermList(x):
     return [makeFactorList(term) for term in x.args]
 
 
-def serchIndexInArgs(exp,indexList=None,indexPos=0):
+def serchIndexInFactor(exp,indexList=None,indexPos=0):
     if indexList is None:
         indexList = []
     expDict = {}
@@ -60,18 +60,23 @@ def serchIndexInArgs(exp,indexList=None,indexPos=0):
     if getattr(exp,'args',False):
         argsDict={}
         for (j,arg) in enumerate(exp.args):
-            argDict = serchIndexInArgs(arg,
+            argDict = serchIndexInFactor(arg,
                           indexList=indexList,indexPos=indexPos)[0]
             if argDict: argsDict[j]=argDict     
         if argsDict: expDict['args']=argsDict         
     return expDict, indexList
-            
+
+#FIXME started but not verry not finished.
+def rebuildFactor(obj)
+    indexList = obj[2]
+    factor = obj[3]
+    indexDict = obj[4]
 
 
 def makeTensorFactorList(factorList):
     ret=[]
     for (i,factor) in enumerate(factorList):
-        indexDict, indexList = serchIndexInArgs(factor)
+        indexDict, indexList = serchIndexInFactor(factor)
         if indexDict:
             ret.append([i,
                         tensor.longTensorName(factor), 
