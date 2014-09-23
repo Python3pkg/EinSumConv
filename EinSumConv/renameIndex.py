@@ -2,58 +2,51 @@ import tensor
 import lists
 import namingSymbols
 import sympy
+import findIndex
 
 
 
-def newIndex_TensorFactorList(tfl, indexGenerator)
-    IndexDict = {}
-    dummyIndexDict = {}
-
-
-def newIndex_FactorList(factorList, indexGenerator):
-    indexDict={}
-    newFactorList=list(factorList)
-    for (i,factor) in enumerate(factorList):
-        if not tensor.isTensor(factor):
-            continue
-        
-        indexList=list(factor.index)
-        for (k,index) in enumerate(indexList):
-            if not isinstance(index, sympy.Dummy):
+def renameDummyIndex_TensorFactorList(tfl, indexGenerator):
+    newDummys = {}
+    oldDummys = findIndex.findIndex_TensorFactorList(tfl)[dummy]
+    for (i,tensor) in enumerate(tensor):
+        for (k,ind) in enumerate(tensor[2]):
+            if not ind in oldDummys:
                 continue
-            if not index in indexDict:
-                indexDict[index]=indexGenerator.next()
-            indexList[k]=indexDict[index]
-        newFactorList[i]=factor.withNewIndex(indexList)
-    return newFactorList
+            if not ind in newDummys:
+                newDummys[ind]=indexGenerator.next()
+            tfl[i][2][k] = newDummys[ind]
 
 
-
-def newIndex_TermList(termList):
+def newIndex_TensorTermList(termList):
     indexList=[]
     indexGenerator=namingSymbols.getNewDummys(List=indexList)
-    return [newIndexFactorList(factorList,
-                               namingSymbols.getNext(indexList,
-                                                     indexGenerator))
+    return [newIndex_TensorFactorList(
+                factorList,
+                namingSymbols.getNext(indexList,indexGenerator))
             for factorList
             in termList]
 
 
 
-def subsIndex(x,oldIndex,newIndex):
-    if not tensor.isTensor(x):
+def subsIndex(exp,oldIndex,newIndex):
+    if not isTensor(exp):
         if not getattr(x, 'args', []):
             return x
-        return type(x)(*[subsIndex(arg,oldIndex,newIndex) for arg in x.args])
+        return type(exp)(*[subsIndex(arg,oldIndex,newIndex) for arg in x.args])
+    newIndexList = []
+    for ind in exp.index:
+        if ind=oldIndex or str(ind=oldIndex):
+            newIndexList.append(newIndex)
+        else:
+            newIndexList.append(ind)
+    if not hasattr(exp,'args'):
+        return exp.withNewIndex(*newIndexList)
+    return type(type(exp))(*newIndexList)(
+        *[subsIndex(arg,oldIndex,newIndex) for arg in x.args])
 
-    indexList=list(x.index)
-    for (k,index) in enumerate(indexList):
-        if index==oldIndex or getattr(x, 'args', None)==oldIndex:
-            indexList[k]=newIndex
-    if not getattr(x, 'args', []):
-        return x.withNewIndex(*indexList)
-    return type(x)(*[subsIndex(arg,oldIndex,newIndex) 
-                     for arg in x.args]).withNewIndex(*indexList)
+
+
 
 
                 
