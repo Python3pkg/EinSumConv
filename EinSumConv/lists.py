@@ -56,3 +56,32 @@ def makeTensorTermList(x):
     termList=makeTermList(x)
     return [makeTensorFactorList(factorList) for factorList in termList]
     
+
+def comprTensorsInList(A,B):
+    if A[1] == B[1]: return 0
+    if A[1] == 'Delta': return -1
+    if B[1] == 'Delta': return 1
+    if A[1] == 'Eps': return -1
+    if B[1] == 'Esp': return 1    
+    if A[1] < B[1]: return -1
+    if A[1] > B[1]: return 1
+    return 0
+
+def sortTensorTermList(tensorTermList):
+    for tensorFactorList in tensorTermList:
+        tensorFactorList.sort(comprTensorsInList)
+
+def printList(list):
+    l=len(list)
+    if l>2:
+        print list
+        return None
+    print '[ ' + str(list[0]) + ' ,'
+    for i in range(1,l-1):
+        print '  ' + str(list[i]) + ' ,'
+    print '  ' + str(list[l-1]) + ' ]'
+    return None
+    
+
+       
+        
