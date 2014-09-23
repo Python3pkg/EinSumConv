@@ -62,9 +62,8 @@ def serchIndexInArgs(exp,indexList=None,indexPos=0):
         for (j,arg) in enumerate(exp.args):
             argDict = serchIndexInArgs(arg,
                           indexList=indexList,indexPos=indexPos)[0]
-            if argDict:
-                argsDict[j]=argDict
-        expDict['args']=argsDict
+            if argDict: argsDict[j]=argDict     
+        if argsDict: expDict['args']=argsDict         
     return expDict, indexList
             
 
@@ -72,11 +71,13 @@ def serchIndexInArgs(exp,indexList=None,indexPos=0):
 def makeTensorFactorList(factorList):
     ret=[]
     for (i,factor) in enumerate(factorList):
-        if tensor.isTensor(factor):
+        indexDict, indexList = serchIndexInArgs(factor)
+        if indexDict:
             ret.append([i,
                         tensor.longTensorName(factor), 
-                        list(factor.index), 
-                        factor])
+                        indexList, 
+                        factor
+                        indexDict])
     return ret
 
 
