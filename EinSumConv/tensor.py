@@ -41,11 +41,29 @@ from sympy.core.cache import cacheit
 def isTensor(x):
     return getattr(x,'is_Tensor',False) and getattr(x,'index',False)
 
-def tensorName(x):
-    if isinstance(x,AppliedTensor):
-        return type(x).__name__
-    if isinstance(type(x),AppliedTensorFunction):
-        return type(type(x)).__name__
+def tensorName(exp):
+    if isinstance(exp,AppliedTensor):
+        return type(exp).__name__
+    if isinstance(type(exp),AppliedTensorFunction):
+        return type(type(exp)).__name__
+    if hasattr(exp,'args')
+        return type(exp).__name__
+    return str(exp)
+
+def longTensorName(exp):
+    if isinstance(exp,AppliedTensor):
+        return type(exp).__name__
+    if isinstance(type(exp),AppliedTensorFunction):
+        return (type(type(exp)).__name__ 
+                +"(" 
+                + ", ".join([longTensorName(xa) for xa in x.args]) 
+                + ")" )
+    if getattr(exp, 'args', []):
+        return (type(exp).__name__ 
+                +"(" 
+                + ", ".join([longTensorName(xa) for xa in x.args]) 
+                + ")" )
+return str(exp)
 
 class TensorFunction(BasicMeta):
     @cacheit
