@@ -49,30 +49,38 @@ def makeTermList(x):
 def serchIndexInFactor(exp,indexList=None,indexPos=0):
     if indexList is None:
         indexList = []
-    expDict = {}
+    indexDict = {}
     if tensor.isTensor(exp):
         expIndex = []
         for ind in exp.index:
             indexList.append(ind)
             expIndex.append(indexPos)
             indexPos += 1
-        expDict['index'] = expIndex
+        indexDict['index'] = expIndex
     if getattr(exp,'args',False):
         argsDict={}
         for (j,arg) in enumerate(exp.args):
             argDict = serchIndexInFactor(arg,
                           indexList=indexList,indexPos=indexPos)[0]
             if argDict: argsDict[j]=argDict     
-        if argsDict: expDict['args']=argsDict         
-    return expDict, indexList
-
-#FIXME started but not verry not finished.
-def rebuildFactor(obj)
-    indexList = obj[2]
-    factor = obj[3]
-    indexDict = obj[4]
+        if argsDict: indexDict['args']=argsDict         
+    return indexDict, indexList
 
 
+def rebuildFactor(factor,indexList,indexDict):
+    if tensor.isTensor(factor): 
+        factor = factor.withNewIndex(*[indexList[i] 
+                                       for i in indexDict['index'] ])
+    if 'args' in indexDict:
+        argsList = list(factor.args)
+        argsDict = indexDict['args']
+        for (j,arg) in enumerate(argsList):
+            if j in argsDict:
+                argsList[j] = rebuildFactor(arg, indexList, argsDict[j])
+        factor = type(factor)(*argsList)
+    return factor
+            
+                    
 def makeTensorFactorList(factorList):
     ret=[]
     for (i,factor) in enumerate(factorList):
@@ -86,10 +94,24 @@ def makeTensorFactorList(factorList):
     return ret
 
 
-def makeTensorTermList(exp):
-    termList=makeTermList(exp)
+def rebuildMul(tensorFactorList,factorList):
+    newFactorList = list(factorList)    
+    for factor in tensorFactorList:
+        newFactorList[factor[0]] = rebuildFactor(factor[3],factor[2],factor[4])
+    return sympy.Mul(*newFactorList)
+
+        
+def makeTensorTermList(termList):
     return [makeTensorFactorList(factorList) for factorList in termList]
+
+
+def rebuildAdd(tensorTermList,TermList):
+    return sympy.Add(*[rebuildMul(tfl,TermList[i]) 
+                       for (i,tfl) in enumerate(tensorTermList)])
+        
+        
     
+
 def indexPathern(index):
     d = {}
     n = 0
