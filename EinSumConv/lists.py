@@ -4,7 +4,10 @@ import tensor
 
 def printStructure(x):
     if getattr(x, 'args', []):
-        return type(x).__name__ + "(" + ", ".join([printStructure(xa) for xa in x.args]) + ")"
+        return (type(x).__name__ 
+                + "(" 
+                + ", ".join([printStructure(xa) for xa in x.args]) 
+                + ")")
     else:
         return str(x)
 
@@ -19,7 +22,9 @@ def flatten(x):
 
 
 def makeFactorList(x):
-    if isinstance(x,sympy.Pow) and isinstance(x.args[1],(int,sympy.Integer)) and x.args[1]>1 :
+    if (isinstance(x,sympy.Pow) 
+            and isinstance(x.args[1],(int,sympy.Integer)) 
+            and x.args[1]>1 ):
         factorList=[]
         base=makeFactorList(x.args[0])
         for i in range(x.args[1]):
@@ -41,14 +46,37 @@ def makeTermList(x):
     return [makeFactorList(term) for term in x.args]
 
 
+def serchIndexInArgs(exp,indexList=None,indexPos=0):
+    if indexList is None:
+        indexList = []
+    expDict = {}
+    if tensor.isTensor(exp):
+        expIndex = []
+        for ind in exp.index:
+            indexList.append(ind)
+            expIndex.append(indexPos)
+            indexPos += 1
+        expDict['index'] = expIndex
+    if getattr(exp,'args',False):
+        argsDict={}
+        for (j,arg) in enumerate(exp.args):
+            argDict = serchIndexInArgs(arg,
+                          indexList=indexList,indexPos=indexPos)[0]
+            if argDict:
+                argsDict[j]=argDict
+        expDict['args']=argsDict
+    return expDict, indexList
+            
+
+
 def makeTensorFactorList(factorList):
     ret=[]
     for (i,factor) in enumerate(factorList):
         if tensor.isTensor(factor):
             ret.append([i,
-                        tensor.tensorName(factor), 
+                        tensor.longTensorName(factor), 
                         list(factor.index), 
-                        getattr(factor,'args',None)])
+                        factor])
     return ret
 
 
