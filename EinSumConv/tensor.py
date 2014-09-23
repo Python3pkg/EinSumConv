@@ -65,6 +65,14 @@ def longTensorName(exp):
                 + ")" )
     return str(exp)
 
+
+def withNewIndex(tensor,index)
+    if isinstance(tensor,AppliedTensor):
+        return type(self)(*index)
+    if isinstance(type(tensor),AppliedTensorFunction):
+        return type(type(self))(*index)(*self.args)
+
+
 class TensorFunction(BasicMeta):
     @cacheit
     def __new__(mcl, name, *arg, **kw):
@@ -85,8 +93,7 @@ class AppliedTensorFunction(FunctionClass):
         return ret
     is_Tensor = True
 
-    def withNewIndex(self,*index):
-        return type(type(self))(*index)(*self.args)
+        
 
 class Tensor(ManagedProperties):
     @cacheit

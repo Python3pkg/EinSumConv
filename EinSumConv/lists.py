@@ -69,8 +69,8 @@ def serchIndexInFactor(exp,indexList=None,indexPos=0):
 
 def rebuildFactor(factor,indexList,indexDict):
     if tensor.isTensor(factor): 
-        factor = factor.withNewIndex(*[indexList[i] 
-                                       for i in indexDict['index'] ])
+        factor = withNewIndex(factro,[indexList[i] 
+                                      for i in indexDict['index'] ])
     if 'args' in indexDict:
         argsList = list(factor.args)
         argsDict = indexDict['args']
