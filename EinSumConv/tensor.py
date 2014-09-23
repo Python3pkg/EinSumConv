@@ -66,11 +66,11 @@ def longTensorName(exp):
     return str(exp)
 
 
-def withNewIndex(tensor,index)
+def withNewIndex(tensor,index):
     if isinstance(tensor,AppliedTensor):
-        return type(self)(*index)
+        return type(tensor)(*index)
     if isinstance(type(tensor),AppliedTensorFunction):
-        return type(type(self))(*index)(*self.args)
+        return type(type(tensor))(*index)(*tensor.args)
 
 
 class TensorFunction(BasicMeta):
