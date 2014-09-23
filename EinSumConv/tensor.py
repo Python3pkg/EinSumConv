@@ -38,8 +38,8 @@ from sympy.core.cache import cacheit
 
 
 # this is the function used in other operations to check if something is a tensor.
-def isTensor(x):
-    return getattr(x,'is_Tensor',False) and getattr(x,'index',False)
+def isTensor(exp):
+    return isinstance(exp,AppliedTensor) or isinstance(type(exp),AppliedTensorFunction)
 
 def tensorName(exp):
     if isinstance(exp,AppliedTensor):
@@ -55,12 +55,12 @@ def longTensorName(exp):
         return type(exp).__name__
     if isinstance(type(exp),AppliedTensorFunction):
         return (type(type(exp)).__name__ 
-                +"(" 
+                + "(" 
                 + ", ".join([longTensorName(arg) for arg in exp.args]) 
                 + ")" )
     if getattr(exp, 'args', []):
         return (type(exp).__name__ 
-                +"(" 
+                + "(" 
                 + ", ".join([longTensorName(arg) for arg in exp.args]) 
                 + ")" )
     return str(exp)
