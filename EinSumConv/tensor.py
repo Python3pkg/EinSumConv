@@ -46,7 +46,7 @@ def tensorName(exp):
         return type(exp).__name__
     if isinstance(type(exp),AppliedTensorFunction):
         return type(type(exp)).__name__
-    if hasattr(exp,'args')
+    if hasattr(exp,'args'):
         return type(exp).__name__
     return str(exp)
 
@@ -56,14 +56,14 @@ def longTensorName(exp):
     if isinstance(type(exp),AppliedTensorFunction):
         return (type(type(exp)).__name__ 
                 +"(" 
-                + ", ".join([longTensorName(xa) for xa in x.args]) 
+                + ", ".join([longTensorName(arg) for arg in exp.args]) 
                 + ")" )
     if getattr(exp, 'args', []):
         return (type(exp).__name__ 
                 +"(" 
-                + ", ".join([longTensorName(xa) for xa in x.args]) 
+                + ", ".join([longTensorName(arg) for arg in exp.args]) 
                 + ")" )
-return str(exp)
+    return str(exp)
 
 class TensorFunction(BasicMeta):
     @cacheit
