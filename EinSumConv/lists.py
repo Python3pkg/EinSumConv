@@ -56,6 +56,16 @@ def makeTensorTermList(x):
     termList=makeTermList(x)
     return [makeTensorFactorList(factorList) for factorList in termList]
     
+def indexPathern(index):
+    d = {}
+    n = 0
+    pathern = []
+    for ind in index:
+        if not ind in d:
+            d[ind] = n
+            n = n+1
+        pathern.append(d[ind])
+    return pathern
 
 def comprTensorsInList(A,B):
     if A[1] == B[1]: return 0
