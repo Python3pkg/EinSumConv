@@ -76,7 +76,7 @@ def makeTensorFactorList(factorList):
             ret.append([i,
                         tensor.longTensorName(factor), 
                         indexList, 
-                        factor
+                        factor,
                         indexDict])
     return ret
 

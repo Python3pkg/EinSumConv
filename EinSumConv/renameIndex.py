@@ -18,10 +18,10 @@ def renameDummyIndex_TensorFactorList(tfl, indexGenerator):
             tfl[i][2][k] = newDummys[ind]
 
 
-def newIndex_TensorTermList(termList):
+def renameDummyIndex_TensorTermList(termList):
     indexList=[]
     indexGenerator=namingSymbols.getNewDummys(List=indexList)
-    return [newIndex_TensorFactorList(
+    return [renameDummyIndex_TensorFactorList(
                 factorList,
                 namingSymbols.getNext(indexList,indexGenerator))
             for factorList
@@ -30,20 +30,20 @@ def newIndex_TensorTermList(termList):
 
 
 def subsIndex(exp,oldIndex,newIndex):
-    if not isTensor(exp):
-        if not getattr(x, 'args', []):
-            return x
-        return type(exp)(*[subsIndex(arg,oldIndex,newIndex) for arg in x.args])
+    if not tensor.isTensor(exp):
+        if not getattr(exp, 'args', []):
+            return exp
+        return type(exp)(*[subsIndex(arg,oldIndex,newIndex) for arg in exp.args])
     newIndexList = []
     for ind in exp.index:
-        if ind=oldIndex or str(ind=oldIndex):
+        if ind==oldIndex or str(ind)==oldIndex:
             newIndexList.append(newIndex)
         else:
             newIndexList.append(ind)
     if not hasattr(exp,'args'):
         return exp.withNewIndex(*newIndexList)
     return type(type(exp))(*newIndexList)(
-        *[subsIndex(arg,oldIndex,newIndex) for arg in x.args])
+        *[subsIndex(arg,oldIndex,newIndex) for arg in exp.args])
 
 
 

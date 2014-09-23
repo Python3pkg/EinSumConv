@@ -41,7 +41,7 @@ def findIndex_TensorTermList(ttl):
         missingFree |= (freeIndex - free)
     return {'free':freeIndex, 
             'dummy':dummyIndex, 
-            'tooMany':tooMany
+            'tooMany':tooMany,
             'missingFree':missingFree,
             'other':other}
 
