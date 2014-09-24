@@ -1,6 +1,13 @@
 import sympy.core.cache
-# import sympy.core.function
-# import sympy.core.compatibility
+import unittest
+
+# Why doesn't it work to use "import sympy.core.compatibility" and call "with_metaclass" as "sympy.core.compatibility.with_metaclass"?
+from sympy.core.compatibility import with_metaclass
+from sympy.core.function import AppliedUndef, FunctionClass
+from sympy.core.core import BasicMeta
+from sympy.core.assumptions import ManagedProperties
+from sympy.core.cache import cacheit
+
 
 
 '''
@@ -29,21 +36,15 @@ True
 '''
 
 
-# Why doesn't it work to use "import sympy.core.compatibility" and call "with_metaclass" as "sympy.core.compatibility.with_metaclass"?
-from sympy.core.compatibility import with_metaclass
-from sympy.core.function import AppliedUndef, FunctionClass
-from sympy.core.core import BasicMeta
-from sympy.core.assumptions import ManagedProperties
-from sympy.core.cache import cacheit
 
 
-# this is the function used in other operations to check if something is a tensor.
 def isTensor(exp):
     return (isinstance(exp,(AppliedTensor, 
-                            AppliedAppliedTensorFunction)) 
+                            AppliedAppliedTensorFunction)))
 
 
-def tensorName(exp):
+#Givs the name of the tensor as a sring, without indices, without arguments.
+def tensorName(exp):  
     if isinstance(exp,AppliedTensor):
         return type(exp).__name__
     if isinstance(type(exp),AppliedTensorFunction):
@@ -52,7 +53,9 @@ def tensorName(exp):
         return type(exp).__name__
     return str(exp)
 
-def longTensorName(exp):
+
+#Givs the name of the tensor as a sring, without indices, with arguments.
+def longTensorName(exp):  
     if isinstance(exp,AppliedTensor):
         return type(exp).__name__
     if isinstance(type(exp),AppliedTensorFunction):
@@ -82,6 +85,7 @@ class TensorFunction(BasicMeta):
         return type.__new__(mcl, name, (AppliedTensorFunction,), kw)
     def __init__(self, *arg, **kw):
         pass
+
 
 class AppliedTensorFunction(FunctionClass):
     __metaclass__ = TensorFunction
@@ -126,4 +130,54 @@ class AppliedTensor(sympy.Symbol):
 
 
 
+
+### Here be unittest ###
+
+class TestTensor(unittest.TestCase):
+
+    def setUp(self):
+        self.t = Tensor('t')
+        self.T = Tensor('t')
+        self.tf = TensorFunction('tf')
+        self.TF = TensorFunction('tf')
+        self.a = sympy.Dummy('a')
+        self.b = sympy.Dummy('b')
+        self.x = sympy.Symbol('x')
+        self.f = sympy.Function('f')
+
+    def test_classRelations(self):
+        t=self.t; tf=self.tf; a=self.a; b=self.b; x=self.x
+        self.assertEqual( type(t), Tensor )
+        self.assertEqual( type(t(a,b)), t )
+        self.assertEqual( type(t(a,b)).__base__, AppliedTensor )
+        self.assertTrue( isinstance(t(a,b), sympy.Symbol))
+        self.assertEqual( type(tf(a,b)), tf )
+        self.assertEqual( type(tf(a,b)).__base__, AppliedTensorFunction )
+        self.assertTrue( isinstance(tf(a,b), sympy.FunctionClass) )
+        self.assertEqual( type(tf(a,b)(x)), tf(a,b) )
+        self.assertEqual( type(tf(a,b)(x)).__base__, AppliedAppliedTensorFunction )
+        self.assertTrue( isinstance(tf(a,b)(x), AppliedUndef) )
+
+    def test_withNewIndex(self):
+        t=self.t; tf=self.tf; a=self.a; b=self.b; x=self.x  
+        self.assertEqual( t(a).withNewIndex(b,b), t(b,b) )
+        self.assertEqual( tf(a)(x).withNewIndex(b,b), tf(b,b)(x) )
+
+    def test_isTensor(self):
+        t=self.t; tf=self.tf; a=self.a; b=self.b; x=self.x; f=self.f
+        self.assertFalse( isTensor(a) )
+        self.assertFalse( isTensor(f(x)) )
+        self.assertTrue( isTensor(t(a,b)) )
+        self.assertTrue( isTensor(tf(a,b)(x,x)) )
+
+    def test_eqality(self):
+        t=self.t; tf=self.tf; a=self.a; b=self.b; x=self.x; TF=self.TF; T=self.T
+        self.assertEqual( t(a), T(a) )
+        self.assertNotEqual( t(b), t(a) )
+        self.assertEqual( tf(a)(x,b), TF(a)(x,b) )
+        self.assertNotEqual( tf(a)(x,b), tf(a)(x,x) )
+        self.assertNotEqual( tf(a)(x,b), tf(b)(x,b) )
+
+if __name__ == '__main__':
+    unittest.main()
 
