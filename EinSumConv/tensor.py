@@ -87,6 +87,7 @@ class TensorFunction(BasicMeta):
         pass
 
 
+#FIXME use sympy.core.compatibility.with_metaclass or similar
 class AppliedTensorFunction(FunctionClass):
     __metaclass__ = TensorFunction
 
@@ -112,7 +113,7 @@ class Tensor(ManagedProperties):
         return type.__new__(mcl, name, (AppliedTensor,),kw)
 
 
-
+#FIXME use sympy.core.compatibility.with_metaclass or 
 class AppliedTensor(sympy.Symbol):
     __metaclass__ = Tensor
 
