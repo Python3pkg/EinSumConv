@@ -158,6 +158,7 @@ class TestTensor(unittest.TestCase):
         self.assertEqual( type(tf(a,b)(x)), tf(a,b) )
         self.assertEqual( type(tf(a,b)(x)).__base__, AppliedAppliedTensorFunction )
         self.assertTrue( isinstance(tf(a,b)(x), AppliedUndef) )
+        self.assertTrue( isinstance(tf(a,b)(x), sympy.Function) )
 
     def test_withNewIndex(self):
         t=self.t; tf=self.tf; a=self.a; b=self.b; x=self.x  
