@@ -39,7 +39,9 @@ from sympy.core.cache import cacheit
 
 # this is the function used in other operations to check if something is a tensor.
 def isTensor(exp):
-    return isinstance(exp,AppliedTensor) or isinstance(type(exp),AppliedTensorFunction)
+    return (isinstance(exp,(AppliedTensor, 
+                            AppliedAppliedTensorFunction)) 
+
 
 def tensorName(exp):
     if isinstance(exp,AppliedTensor):
@@ -67,10 +69,9 @@ def longTensorName(exp):
 
 
 def withNewIndex(tensor,index):
-    if isinstance(tensor,AppliedTensor):
-        return type(tensor)(*index)
-    if isinstance(type(tensor),AppliedTensorFunction):
-        return type(type(tensor))(*index)(*tensor.args)
+    if isTensor(tensor):
+        return tensor.withNewIndex(*index)
+    return tensor
 
 
 class TensorFunction(BasicMeta):
@@ -88,11 +89,15 @@ class AppliedTensorFunction(FunctionClass):
     @cacheit
     def __new__(mcl, *index, **kw):
         name = mcl.__name__ + str(index)
-        ret = type.__new__(mcl, name, (AppliedUndef,),kw)
+        ret = type.__new__(mcl, name, (AppliedAppliedTensorFunction,AppliedUndef),kw)
         ret.index = index
         return ret
     is_Tensor = True
 
+
+class AppliedAppliedTensorFunction(AppliedUndef):
+    def withNewIndex(self, *index):
+        return type(type(self))(*index)(*self.args)
         
 
 class Tensor(ManagedProperties):
@@ -101,6 +106,8 @@ class Tensor(ManagedProperties):
         if (name == "AppliedTensor"):
             return type.__new__(mcl, name, *arg, **kw)
         return type.__new__(mcl, name, (AppliedTensor,),kw)
+
+
 
 class AppliedTensor(sympy.Symbol):
     __metaclass__ = Tensor
@@ -112,6 +119,7 @@ class AppliedTensor(sympy.Symbol):
         ret.index = index
         return ret
     is_Tensor = True
+
 
     def withNewIndex(self,*index):
         return type(self)(*index)
