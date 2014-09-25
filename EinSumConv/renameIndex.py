@@ -18,14 +18,20 @@ def renameDummyIndex_TensorFactorList(tfl, indexGenerator):
             tfl[i][2][k] = newDummys[ind]
 
 
-def renameDummyIndex_TensorTermList(termList):
+def renameDummyIndex_TensorTermList(ttl):
     indexList=[]
     indexGenerator=namingSymbols.getNewDummys(List=indexList)
     return [renameDummyIndex_TensorFactorList(
-                factorList,
+                tfl,
                 namingSymbols.getNext(indexList,indexGenerator))
-            for factorList
-            in termList]
+            for tfl in ttl]
+
+
+def renameDummyIndex(exp):
+    tl=lists.makeTermList(exp)
+    ttl=lists.makeTensorTermList(tl)
+    renameDummyIndex_TensorTermList(ttl)
+    return lists.rebuildAdd(ttl,tl)
 
 
 
