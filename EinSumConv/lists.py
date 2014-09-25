@@ -69,7 +69,6 @@ def makeTermList(exp):
 
 
 def serchIndexInFactor(exp):
-    import pdb; pdb.set_trace()
     def serch(exp,indexList,indexPos):
         indexDict = {}
         if tensor.isTensor(exp):

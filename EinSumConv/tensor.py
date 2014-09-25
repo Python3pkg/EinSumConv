@@ -1,5 +1,4 @@
 import sympy.core.cache
-import unittest
 
 # Why doesn't it work to use "import sympy.core.compatibility" and call "with_metaclass" as "sympy.core.compatibility.with_metaclass"?
 from sympy.core.compatibility import with_metaclass
@@ -133,6 +132,7 @@ class AppliedTensor(sympy.Symbol):
 
 
 ### Here be unittest ###
+import unittest
 
 class TestTensor(unittest.TestCase):
 
