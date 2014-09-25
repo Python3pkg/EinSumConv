@@ -14,11 +14,13 @@ factorList (fl) is a list of all factors in an expression
 
 termList (tl) is a list of fl for each arg of a sympy.Add
 
-tensorFactorList (tfl) is always generated from a mother fl. tfl is a list of all tensors (and functions of tensors) that where in the tl. factors in tfl are represented as list of properties.
-
-factor always refers to an object in a fl or tfl
+tensorFactorList (tfl) is always generated from a mother fl. tfl is a list of all tensors (and functions of tensors) that where in the tl. tensorFactors in tfl are represented as list of properties.
 
 tensorTermList (ttl) is always generated from a mother tl. ttl is a list of tfl for each fl in tl.
+
+factor refere to an element in a fl
+
+tensorFactor refere to an element in a tfl
 
 
 serchIndexInFactor(exp)
@@ -92,11 +94,12 @@ def makeTensorFactorList(factorList):
     for (i,factor) in enumerate(factorList):
         indexDict, indexList = serchIndexInFactor(factor)
         if indexDict:
-            ret.append([i,
-                        tensor.longTensorName(factor), 
-                        indexList, 
-                        factor,
-                        indexDict])
+            tensorFactor={}
+            tensorFactor['pos']=i
+            tensorFactor['name']=longTensorName(factor)
+            tensorFactor['indexDict']=indexDict
+            tensorFactor['indexList']=indexList
+            ret.append(tensorFactor)
     return ret
 
 
@@ -104,24 +107,29 @@ def makeTensorTermList(termList):
     return [makeTensorFactorList(factorList) for factorList in termList]
 
 
-def rebuildFactor(factor,indexList,indexDict):
-    if tensor.isTensor(factor): 
-        factor = tensor.withNewIndex(
-            factor,[indexList[i] for i in indexDict['index'] ])
-    if 'args' in indexDict:
-        argsList = list(factor.args)
-        argsDict = indexDict['args']
-        for (j,arg) in enumerate(argsList):
-            if j in argsDict:
-                argsList[j] = rebuildFactor(arg, indexList, argsDict[j])
-        factor = type(factor)(*argsList)
-    return factor
+def rebuildFactor(oldFactor,tensorFactor)
+    def rebuild(factor,indexList,indexDict):
+        if tensor.isTensor(factor): 
+            factor = tensor.withNewIndex(
+                factor,[indexList[i] for i in indexDict['index'] ])
+        if 'args' in indexDict:
+            argsList = list(factor.args)
+            argsDict = indexDict['args']
+            for (j,arg) in enumerate(argsList):
+                if j in argsDict:
+                    argsList[j] = rebuildFactor(arg, indexList, argsDict[j])
+            factor = type(factor)(*argsList)
+        return factor
+    return rebuild(oldFactor, 
+                   tensorFactor['indexList'],
+                   tensorFactor['indexDict'])
 
 
 def rebuildMul(tensorFactorList,factorList):
     newFactorList = list(factorList)    
-    for factor in tensorFactorList:
-        newFactorList[factor[0]] = rebuildFactor(factor[3],factor[2],factor[4])
+    for tensorfactor in tensorFactorList:
+        pos = tensorFactor['pos']
+        newFactorList[pos] = rebuildFactor(factorList[pos],tensorFactor)
     return sympy.Mul(*newFactorList)
 
 
@@ -136,16 +144,14 @@ def sortTensorTermList(tensorTermList):
         
 
 def comprTensorsInList(A,B):
-    if A[1] == B[1]: 
-        if indexPathern(A[2]) < indexPathern(B[2]): return -1
-        if indexPathern(A[2]) > indexPathern(B[2]): return 1
-        return 0
-    if A[1] == 'Delta': return -1
-    if B[1] == 'Delta': return 1
-    if A[1] == 'Eps': return -1
-    if B[1] == 'Esp': return 1    
-    if A[1] < B[1]: return -1
-    if A[1] > B[1]: return 1
+    if A['name'] == B['name']: 
+        if indexPathern(A['indexList']) < indexPathern(B['indexList']): 
+            return -1
+        if indexPathern(A['indexList']) > indexPathern(B['indexList']): 
+            return 1
+        return 0  
+    if A['name'] < B['name']: return -1
+    if A['name'] > B['name']: return 1
     return 0
 
         
