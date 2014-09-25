@@ -7,7 +7,7 @@ def findIndex_TensorFactorList(tfl):
     tooMany = set()
     other = set()
     for tensor in tfl:
-        for ind in tensor[2]:
+        for ind in tensor['indexList']:
             if not isinstance(ind,(sympy.Dummy,sympy.Symbol)):
                 other.add(ind)
             if ind in dummyIndex:

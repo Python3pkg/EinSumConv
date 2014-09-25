@@ -6,16 +6,17 @@ import findIndex
 
 
 
+
 def renameDummyIndex_TensorFactorList(tfl, indexGenerator):
     newDummys = {}
     oldDummys = findIndex.findIndex_TensorFactorList(tfl)['dummy']
     for (i,tensor) in enumerate(tfl):
-        for (k,ind) in enumerate(tensor[2]):
+        for (k,ind) in enumerate(tensor['indexList']):
             if not ind in oldDummys:
                 continue
             if not ind in newDummys:
                 newDummys[ind]=indexGenerator.next()
-            tfl[i][2][k] = newDummys[ind]
+            tfl[i]['indexList'][k] = newDummys[ind]
 
 
 def renameDummyIndex_TensorTermList(ttl):
@@ -39,7 +40,8 @@ def subsIndex(exp,oldIndex,newIndex):
     if not tensor.isTensor(exp):
         if not getattr(exp, 'args', []):
             return exp
-        return type(exp)(*[subsIndex(arg,oldIndex,newIndex) for arg in exp.args])
+        return type(exp)(*[subsIndex(arg,oldIndex,newIndex) 
+                           for arg in exp.args])
     newIndexList = []
     for ind in exp.index:
         if ind==oldIndex or str(ind)==oldIndex:
@@ -54,7 +56,13 @@ def subsIndex(exp,oldIndex,newIndex):
 
 
 
-
+def pdb_test():
+    f=sympy.Function('f')
+    t=tensor.Tensor('t')
+    tf=tensor.TensorFunction('tf')
+    x,y,z = sympy. symbols('x,y,z')
+    exp = f(t(x), z, tf(x,y)(z, z, tf(z,z)(x,x) ) )
+    return renameDummyIndex(exp)
                 
 
 

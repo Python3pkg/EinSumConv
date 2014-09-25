@@ -18,7 +18,7 @@ tensorFactorList (tfl) is always generated from a mother fl. tfl is a list of al
 
 tensorTermList (ttl) is always generated from a mother tl. ttl is a list of tfl for each fl in tl.
 
-factor refere to an element in a fl
+factor refere to an element in a fl or tfl
 
 tensorFactor refere to an element in a tfl
 
@@ -68,25 +68,28 @@ def makeTermList(exp):
     return [makeFactorList(term) for term in exp.args]
 
 
-def serchIndexInFactor(exp, indexList=None, indexPos=0):
-    if indexList is None:
-        indexList = []
-    indexDict = {}
-    if tensor.isTensor(exp):
-        expIndex = []
-        for ind in exp.index:
-            indexList.append(ind)
-            expIndex.append(indexPos)
-            indexPos += 1
-        indexDict['index'] = expIndex
-    if getattr(exp,'args',False):
-        argsDict={}
-        for (j,arg) in enumerate(exp.args):
-            argDict = serchIndexInFactor(arg,
-                          indexList=indexList,indexPos=indexPos)[0]
-            if argDict: argsDict[j]=argDict     
-        if argsDict: indexDict['args']=argsDict         
-    return indexDict, indexList
+def serchIndexInFactor(exp):
+    import pdb; pdb.set_trace()
+    def serch(exp,indexList,indexPos):
+        indexDict = {}
+        if tensor.isTensor(exp):
+            expIndex = []
+            for ind in exp.index:
+                indexList.append(ind)
+                expIndex.append(indexPos)
+                indexPos += 1
+            indexDict['index'] = expIndex
+        if getattr(exp,'args',False):
+            argsDict = {}
+            for (j,arg) in enumerate(exp.args):
+                argDict,indexList,indexPos = serch(arg,indexList,indexPos)
+                if argDict: argsDict[j]=argDict     
+            if argsDict: indexDict['args']=argsDict         
+        return indexDict, indexList, indexPos
+    indexList = []
+    indexPos = 0
+    ret = serch(exp, indexList, indexPos)
+    return ret[0], ret[1]
 
 
 def makeTensorFactorList(factorList):
@@ -96,7 +99,7 @@ def makeTensorFactorList(factorList):
         if indexDict:
             tensorFactor={}
             tensorFactor['pos']=i
-            tensorFactor['name']=longTensorName(factor)
+            tensorFactor['name']=tensor.longTensorName(factor)
             tensorFactor['indexDict']=indexDict
             tensorFactor['indexList']=indexList
             ret.append(tensorFactor)
@@ -107,7 +110,7 @@ def makeTensorTermList(termList):
     return [makeTensorFactorList(factorList) for factorList in termList]
 
 
-def rebuildFactor(oldFactor,tensorFactor)
+def rebuildFactor(oldFactor,tensorFactor):
     def rebuild(factor,indexList,indexDict):
         if tensor.isTensor(factor): 
             factor = tensor.withNewIndex(
@@ -117,7 +120,7 @@ def rebuildFactor(oldFactor,tensorFactor)
             argsDict = indexDict['args']
             for (j,arg) in enumerate(argsList):
                 if j in argsDict:
-                    argsList[j] = rebuildFactor(arg, indexList, argsDict[j])
+                    argsList[j] = rebuild(arg, indexList, argsDict[j])
             factor = type(factor)(*argsList)
         return factor
     return rebuild(oldFactor, 
@@ -127,7 +130,7 @@ def rebuildFactor(oldFactor,tensorFactor)
 
 def rebuildMul(tensorFactorList,factorList):
     newFactorList = list(factorList)    
-    for tensorfactor in tensorFactorList:
+    for tensorFactor in tensorFactorList:
         pos = tensorFactor['pos']
         newFactorList[pos] = rebuildFactor(factorList[pos],tensorFactor)
     return sympy.Mul(*newFactorList)
