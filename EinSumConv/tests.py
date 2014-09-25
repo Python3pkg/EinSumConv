@@ -1,5 +1,6 @@
 import unittest
 from tensor import TestTensor
+from findIndex import TestfindIndex
 
 
 

@@ -87,3 +87,6 @@ class TestFindIndex(unittest.TestCase):
                                          'other': {1},
                                          'tooMany': {_a} }
 
+if __name__ == '__main__':
+    unittest.main()
+
