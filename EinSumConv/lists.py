@@ -85,10 +85,9 @@ def serchIndexInFactor(exp):
                 if argDict: argsDict[j]=argDict     
             if argsDict: indexDict['args']=argsDict         
         return indexDict, indexList, indexPos
-    indexList = []
-    indexPos = 0
-    ret = serch(exp, indexList, indexPos)
-    return ret[0], ret[1]
+    indexList = []; indexPos = 0
+    indexDict, indexList, indexPos = serch(exp, indexList, indexPos)
+    return indexDict, indexList
 
 
 def makeTensorFactorList(factorList):
@@ -110,21 +109,23 @@ def makeTensorTermList(termList):
 
 
 def rebuildFactor(oldFactor,tensorFactor):
-    def rebuild(factor,indexList,indexDict):
-        if tensor.isTensor(factor): 
-            factor = tensor.withNewIndex(
-                factor,[indexList[i] for i in indexDict['index'] ])
-        if 'args' in indexDict:
-            argsList = list(factor.args)
-            argsDict = indexDict['args']
-            for (j,arg) in enumerate(argsList):
-                if j in argsDict:
-                    argsList[j] = rebuild(arg, indexList, argsDict[j])
-            factor = type(factor)(*argsList)
-        return factor
-    return rebuild(oldFactor, 
-                   tensorFactor['indexList'],
-                   tensorFactor['indexDict'])
+    return withNewIndex(oldFactor, 
+                   tensorFactor['indexDict'],
+                   tensorFactor['indexList'])
+
+
+def withNewIndex(factor, indexDict, indexList):
+    if tensor.isTensor(factor): 
+        factor = factor.withNewIndex(
+            [indexList[i] for i in indexDict['index'] ])
+    if 'args' in indexDict:
+        argsList = list(factor.args)
+        argsDict = indexDict['args']
+        for (j,arg) in enumerate(argsList):
+            if j in argsDict:
+                argsList[j] = withNewIndex(arg, argsDict[j], indexList)
+        factor = type(factor)(*argsList)
+    return factor
 
 
 def rebuildMul(tensorFactorList,factorList):

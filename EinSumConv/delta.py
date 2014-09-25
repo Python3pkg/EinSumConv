@@ -2,10 +2,17 @@ import tensor
 import lists
 import sympy
 
+
+global dim
+
 class Delta(tensor.AppliedTensor):
     pass
 
-def contractKroneckerDelta(factorList,dim=4):
+def setDim(newDim):
+    dim=newDim
+
+
+def contractOneDelta(factorList,dim=4):
     newFactorList=list(factorList)
     for (i,D) in enumerate(factorList):
         if not isinstance(D,Delta):
@@ -20,32 +27,49 @@ def contractKroneckerDelta(factorList,dim=4):
             return newFactorList
         
         for (j,factor) in enumerate(factorList):
-            if i==j or not tensor.isTensor(factor):
+            if i==j: continue
+
+            if isinstance(factor,tensor.AppliedTensor):
+                indexList=list(factor.index)
+                if not deltaReplace(indexList,d1,d2):
+                    continue
+                newFactorList[j]=factor.withNewIndex(*indexList)
+                return newFactorList
+            
+            if not hasattr(factor,'args'): continue
+
+            indexDict, indexList = lists.serchIndexInFactor(factor)
+            if not deltaReplace(indexList,d1,d2):
                 continue
-            indexList=list(factor.index)
-            for (k,index) in enumerate(factor.index):
-                if index==d1:
-                    newFactorList[i]=1 #delta=1
-                    indexList[k]=d2 #replace index a==d1 with d2
-                    newFactorList[j]=factor.withNewIndex(tuple(indexList))
-                    return newFactorList
-                if index==d2:
-                    newFactorList[i]=1 #delta=1
-                    indexList[k]=d1 #replace index a==d2 with d1
-                    newFactorList[j]=factor.withNewIndex(tuple(indexList))
-                    return newFactorList
+            newFactorList[j] = lists.withNewIndex(
+                                    factor, indexDict, indexList)
+            return newFactorList
     return None
 
 
-def contractAllKroneckerDeltas(factorList, *arg, **kw):
+
+def deltaReplace(theList,d1,d2):
+    for (i,obj) in enumerate(theList):
+        if obj==d1:
+            theList[i]=d2
+            return True
+        if obj==d2:
+            theList[i]=d1
+            return True
+    return False
+
+
+
+def contractDeltas_factorList(factorList, *arg, **kw):
     while True:
-        newFactorList=contractKroneckerDelta(factorList, *arg, **kw)
+        newFactorList=contractOneDelta(factorList, *arg, **kw)
         if newFactorList==None:
             return factorList
         factorList=newFactorList
 
-def contractDeltas(x, *arg, **kw):
+
+def contractDeltas(exp, *arg, **kw):
     return sympy.Add(*[sympy.Mul(*contractAllKroneckerDeltas(
                                       factorList, *arg, **kw)) 
                        for factorList 
-                       in lists.makeTermList(x)])
+                       in lists.makeTermList(exp)])
