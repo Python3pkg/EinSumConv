@@ -3,16 +3,17 @@ import lists
 import sympy
 
 
-global dim
+dim = 4
 
 class Delta(tensor.AppliedTensor):
     pass
 
 def setDim(newDim):
-    dim=newDim
+    global dim
+    dim = newDim
 
 
-def contractOneDelta(factorList,dim=4):
+def contractOneDelta(factorList):
     newFactorList=list(factorList)
     for (i,D) in enumerate(factorList):
         if not isinstance(D,Delta):
@@ -69,7 +70,7 @@ def contractDeltas_factorList(factorList, *arg, **kw):
 
 
 def contractDeltas(exp, *arg, **kw):
-    return sympy.Add(*[sympy.Mul(*contractAllKroneckerDeltas(
+    return sympy.Add(*[sympy.Mul(*contractDeltas_factorList(
                                       factorList, *arg, **kw)) 
                        for factorList 
                        in lists.makeTermList(exp)])
