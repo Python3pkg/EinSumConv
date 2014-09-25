@@ -8,8 +8,8 @@ import findIndex
 
 def renameDummyIndex_TensorFactorList(tfl, indexGenerator):
     newDummys = {}
-    oldDummys = findIndex.findIndex_TensorFactorList(tfl)[dummy]
-    for (i,tensor) in enumerate(tensor):
+    oldDummys = findIndex.findIndex_TensorFactorList(tfl)['dummy']
+    for (i,tensor) in enumerate(tfl):
         for (k,ind) in enumerate(tensor[2]):
             if not ind in oldDummys:
                 continue
