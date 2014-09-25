@@ -31,7 +31,7 @@ def findIndex_TensorTermList(ttl):
     tooMany = set()
     other = set()    
     for tfl in ttl:
-        index = serchIndex_TensorFactorList(tfl)
+        index = findIndex_TensorFactorList(tfl)
         freeIndexList.append(index[free])
         freeIndex |= index[free]
         dummyIndex |= index[dummy]
@@ -39,6 +39,8 @@ def findIndex_TensorTermList(ttl):
         other |= index[other]   
     for free in freeIndexList:
         missingFree |= (freeIndex - free)
+    tooManny |= (freeIndex & dummyIndex)
+    dummyIndex -= freeIndex 
     return {'free':freeIndex, 
             'dummy':dummyIndex, 
             'tooMany':tooMany,
@@ -46,4 +48,6 @@ def findIndex_TensorTermList(ttl):
             'other':other}
 
 def findIndex(exp):
-    return serchIndex_TensorTermList(lists.makeTensorTermList(exp))
+    return serchIndex_TensorTermList(
+        lists.makeTensorTermList(
+            lists.makeTermList(exp)))
