@@ -1,5 +1,6 @@
 import lists
 import sympy
+import tensor
 
 
 
@@ -8,9 +9,9 @@ def findIndex_TensorFactorList(tfl):
     dummyIndex = set()
     tooMany = set()
     other = set()
-    for tensor in tfl:
-        for ind in tensor['indexList']:
-            if not isinstance(ind,(sympy.Dummy,sympy.Symbol)):
+    for factor in tfl:
+        for ind in factor['indexList']:
+            if not tensor.isAllowedDummyIndex(ind):
                 other.add(ind)
             elif ind in dummyIndex:
                 tooMany.add(ind)
@@ -60,7 +61,6 @@ def findIndex(exp):
 
 ### Here be unittest ###
 import unittest
-import tensor
 
 class TestFindIndex(unittest.TestCase):
 

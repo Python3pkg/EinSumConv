@@ -20,7 +20,7 @@ def evalTwoEps(eps,ePS):
         for I,J,K in [(ePS.index[0], ePS.index[1], ePS.index[2]),
                       (ePS.index[1], ePS.index[2], ePS.index[0]),
                       (ePS.index[2], ePS.index[0], ePS.index[1])]:
-            if not i==I and isinstance(i, (sympy.Symbol, sympy.Dummy)): 
+            if not i==I and tensor.isAllowedDummyIndex(i): 
                 continue
             return delta.contractDeltas(
                 delta.Delta(j,J)*delta.Delta(k,K)
@@ -50,7 +50,7 @@ def evalOneEps(eps):
 
 ### Here be unittest ###
 import unittest
-from delta import Delta, dim, setDim
+from delta import Delta, getDim, setDim
 
 
 class TestEps(unittest.TestCase):
@@ -60,7 +60,7 @@ class TestEps(unittest.TestCase):
 
     def test_dim(self):
         a,b = sympy.symbols('a,b')
-        tempDim=dim
+        tempDim=getDim()
         setDim(4711)
         self.assertEqual(evalTwoEps(Eps(1,a,b),Eps(1,a,b)), 6)
         setDim(tempDim)

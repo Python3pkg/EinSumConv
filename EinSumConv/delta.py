@@ -46,11 +46,14 @@ def setDim(newDim):
     global dim
     dim = newDim
 
+def getDim():
+    return dim
+
 
 def contractOneDelta(factorList, **tempDim):
     if 'dim' in tempDim:
-        dimensions = tempDim['dim']
-    else: dimensions = dim
+        dim = tempDim['dim']
+    else: dim = getDim()
     
     newFactorList=list(factorList)
     for (i,D) in enumerate(factorList):
@@ -60,17 +63,17 @@ def contractOneDelta(factorList, **tempDim):
         if not len(getattr(D,'index',[]))==2:
             raise TypeError('Error: delta must have precisly two indices')
         d1,d2 = D.index
-        if not (isinstance(d1,(sympy.Symbol,sympy.Dummy))
-                or isinstance(d2,(sympy.Symbol,sympy.Dummy))):
-            if (isinstance(d1,(sumpy.Integer,int)) 
-                    and isinstance(d2,(sumpy.Integer,int)) ):
+        if not (tensor.isAllowedDummyIndex(d1)
+                or tensor.isAllowedDummyIndex(d2)):
+            if (isinstance(d1,(sympy.Integer,int)) 
+                    and isinstance(d2,(sympy.Integer,int)) ):
                 if d1==d2: newFactorList[i]=1
                 else: newFactorList[i]=0    
                 return newFactorList
             continue
         
         if d1==d2:
-            newFactorList[i]=dimensions
+            newFactorList[i]=dim
             return newFactorList
         
         for (j,factor) in enumerate(factorList):
@@ -98,10 +101,10 @@ def contractOneDelta(factorList, **tempDim):
 
 def deltaReplace(theList,d1,d2):
     for (i,obj) in enumerate(theList):
-        if isinstance(d1,(sympy.Symbol,sympy.Dummy)) and obj==d1:
+        if tensor.isAllowedDummyIndex(d1) and obj==d1:
             theList[i]=d2
             return True
-        if isinstance(d2,(sympy.Symbol,sympy.Dummy)) and obj==d2:
+        if tensor.isAllowedDummyIndex(d2) and obj==d2:
             theList[i]=d1
             return True
     return False
@@ -152,7 +155,7 @@ class TestDelta(unittest.TestCase):
         self.assertEqual(contractDeltas(exp),13*dim)
 
         exp = Delta(1,2)*Delta(3,a)*tf(a,3)(x,x)+5
-        self.assertEqual(contractDeltas(exp),Delta(1,2)*tf(3,3)(x,x)+5)
+        self.assertEqual(contractDeltas(exp), 5)
 
         exp = 4711
         self.assertEqual(contractDeltas(exp),4711)
@@ -166,7 +169,7 @@ class TestDelta(unittest.TestCase):
 
     def test_dim(self):
         a=self.a
-        tempDim=dim
+        tempDim=getDim()
         setDim(4)
         self.assertEqual(contractDeltas(Delta(a,a)),4)
         setDim(4711)
@@ -174,7 +177,7 @@ class TestDelta(unittest.TestCase):
         setDim(tempDim)
         self.assertEqual(contractDeltas(Delta(a,a),dim=13),13)
         setDim(tempDim)
-        self.assertEqual(dim,tempDim)
+        self.assertEqual(getDim(),tempDim)
 
 if __name__ == '__main__':
     unittest.main()

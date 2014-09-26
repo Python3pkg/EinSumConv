@@ -42,7 +42,7 @@ def isTensor(exp):
                             AppliedAppliedTensorFunction)))
 
 
-#Givs the name of the tensor as a sring, without indices, without arguments.
+# Givs the name of the tensor as a sring, without indices, without arguments.
 def tensorName(exp):  
     if isinstance(exp,AppliedTensor):
         return type(exp).__name__
@@ -53,7 +53,7 @@ def tensorName(exp):
     return str(exp)
 
 
-#Givs the name of the tensor as a sring, without indices, with arguments.
+# Givs the name of the tensor as a sring, without indices, with arguments.
 def longTensorName(exp):  
     if isinstance(exp,AppliedTensor):
         return type(exp).__name__
@@ -68,6 +68,11 @@ def longTensorName(exp):
                 + ", ".join([longTensorName(arg) for arg in exp.args]) 
                 + ")" )
     return str(exp)
+
+
+# Defines what types of indices to be contracted over
+def isAllowedDummyIndex(ind):
+    return isinstance(ind, (sympy.Symbol, sympy.Dummy) )
 
 
 def withNewIndex(tensor,index):
