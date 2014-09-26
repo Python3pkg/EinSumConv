@@ -50,13 +50,20 @@ def evalOneEps(eps):
 
 ### Here be unittest ###
 import unittest
-from delta import Deta
+from delta import Delta, dim, setDim
 
 
 class TestEps(unittest.TestCase):
 
     def setUp(self):
         pass
+
+    def test_dim(self):
+        a,b = sympy.symbols('a,b')
+        tempDim=dim
+        setDim(4711)
+        self.assertEqual(evalTwoEps(Eps(1,a,b),Eps(1,a,b)), 6)
+        setDim(tempDim)
 
     def test_evaOneEsps(self):
         a,b,c = sympy.symbols('a,b,c')
