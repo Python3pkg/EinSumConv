@@ -1,6 +1,8 @@
 import lists
 import sympy
 
+
+
 def findIndex_TensorFactorList(tfl):
     freeIndex = set()
     dummyIndex = set()
@@ -58,6 +60,7 @@ def findIndex(exp):
 
 ### Here be unittest ###
 import unittest
+import tensor
 
 class TestFindIndex(unittest.TestCase):
 
@@ -66,7 +69,7 @@ class TestFindIndex(unittest.TestCase):
         self.tf = tensor.TensorFunction('tf')
         self.a = sympy.Dummy('a')
         self.b = sympy.Dummy('b')
-        self.x, self.y, self.z = sympy.Symbol('x,y,z')
+        self.x, self.y, self.z = sympy.symbols('x,y,z')
         self.f = sympy.Function('f')
 
     def test_findIndex(self):
@@ -74,18 +77,18 @@ class TestFindIndex(unittest.TestCase):
         x=self.x; y=self.y; z=self.z; f=self.f
 
         exp = f(t(x), z, tf(x,y)(z, z, tf(z,z)(x,x) ) )
-        self.assertTrue(findIndex(exp),{ 'dummy': {x, z},
+        self.assertEqual(findIndex(exp),{'dummy': {x, z},
                                          'free': {y},
                                          'missingFree': set(),
                                          'other': set(),
-                                         'tooMany': set() })
+                                         'tooMany': set() } )
 
         exp = t(a,b)+t(a,a)+t(a,b,1)
-        self.assertTrue(findIndex(exp),{ 'dummy': set(),
-                                         'free': {_b, _a},
-                                         'missingFree': {_b},
+        self.assertEqual(findIndex(exp),{'dummy': set(),
+                                         'free': {b, a},
+                                         'missingFree': {b},
                                          'other': {1},
-                                         'tooMany': {_a} }
+                                         'tooMany': {a} } )
 
 if __name__ == '__main__':
     unittest.main()

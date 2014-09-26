@@ -117,7 +117,7 @@ def rebuildFactor(oldFactor,tensorFactor):
 def withNewIndex(factor, indexDict, indexList):
     if tensor.isTensor(factor): 
         factor = factor.withNewIndex(
-            [indexList[i] for i in indexDict['index'] ])
+            *[indexList[i] for i in indexDict['index'] ])
     if 'args' in indexDict:
         argsList = list(factor.args)
         argsDict = indexDict['args']
