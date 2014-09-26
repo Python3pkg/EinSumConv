@@ -37,7 +37,7 @@ dim can be overrided in spesific calculations
 
 
 
-dim = 4
+dim = 3
 
 class Delta(tensor.AppliedTensor):
     pass
@@ -62,8 +62,10 @@ def contractOneDelta(factorList, **tempDim):
         d1,d2 = D.index
         if not (isinstance(d1,(sympy.Symbol,sympy.Dummy))
                 or isinstance(d2,(sympy.Symbol,sympy.Dummy))):
-            if d1==d2 and isinstance(d1,(sumpy.Integer,int)):
-                newFactorList[i]=1
+            if (isinstance(d1,(sumpy.Integer,int)) 
+                    and isinstance(d2,(sumpy.Integer,int)) ):
+                if d1==d2: newFactorList[i]=1
+                else: newFactorList[i]=0    
                 return newFactorList
             continue
         
