@@ -3,6 +3,40 @@ import lists
 import sympy
 
 
+'''
+<!> Always use sympy.expand(exp) before using makeTermList(exp) <!>
+If you ignore this recomendation, stuf might not work as expcted.
+
+Delta is the Kronicer delta.
+
+ContractDeltas contracts all idndices of all Deltas, that are sympy.Symbol or sympy.Dummy
+
+>>> T=tensor.Tensor('T')
+>>> a,b,c,d = sympy.symbols('a,b,c,d')
+>>> contractDeltas(Delta(a,c)*Detla(b,d)*T(c,d))
+T(a, b)
+
+dim is the number of dimensions of the indecis.
+>>> constracDeltas(Delta(a,a)) == dim
+True
+
+setDim canges dim. Dim is originaly set to 4
+>>> dim
+4
+>>> setDim(4711)
+>>> dim
+4711
+
+dim can be overrided in spesific calculations
+>>> setDim(4)
+>>> constracDeltas(Delta(a,a), dim=13)
+13
+
+'''
+
+
+
+
 dim = 4
 
 class Delta(tensor.AppliedTensor):
@@ -13,7 +47,11 @@ def setDim(newDim):
     dim = newDim
 
 
-def contractOneDelta(factorList):
+def contractOneDelta(factorList, **tempDim):
+    if 'dim' in tempDim:
+        dimensions = tempDim['dim']
+    else: dimensions = dim
+    
     newFactorList=list(factorList)
     for (i,D) in enumerate(factorList):
         if not isinstance(D,Delta):
@@ -30,7 +68,7 @@ def contractOneDelta(factorList):
             continue
         
         if d1==d2:
-            newFactorList[i]=dim
+            newFactorList[i]=dimensions
             return newFactorList
         
         for (j,factor) in enumerate(factorList):
@@ -131,6 +169,8 @@ class TestDelta(unittest.TestCase):
         self.assertEqual(contractDeltas(Delta(a,a)),4)
         setDim(4711)
         self.assertEqual(contractDeltas(Delta(a,a)),4711)
+        setDim(tempDim)
+        self.assertEqual(contractDeltas(Delta(a,a),dim=13),13)
         setDim(tempDim)
         self.assertEqual(dim,tempDim)
 
