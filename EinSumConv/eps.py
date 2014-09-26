@@ -48,5 +48,31 @@ def evalOneEps(eps):
  
 
 
+### Here be unittest ###
+import unittest
+from delta import Deta
 
+
+class TestEps(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_evaOneEsps(self):
+        a,b,c = sympy.symbols('a,b,c')
+        self.assertEqual(evalOneEps(Eps(1,a,b)),
+                Delta(a,2)*Delta(b,3)-Delta(a,3)*Delta(b,2) )
+        self.assertEqual(evalOneEps(Eps(a,b,c)), None)
+        self.assertEqual(evalOneEps(Eps(a,3,2)), -Delta(a,1))
+        self.assertEqual(evalOneEps(Eps(a,a,b)), 0)
+        self.assertEqual(evalOneEps(Eps(1,2,3)), 1)
+
+    def test_evaTwoEsps(self):
+        a,b,c,d,e = sympy.symbols('a,b,c,d,e')
+        self.assertEqual(evalTwoEps(Eps(1,a,b),Eps(1,a,b)), 6)
+        self.assertEqual(evalTwoEps(Eps(a,b,c),Eps(d,e,a)), 
+                Delta(b,d)*Delta(c,e)-Delta(b,e)*Delta(c,d) )
+
+if __name__ == '__main__':
+    unittest.main()
 
