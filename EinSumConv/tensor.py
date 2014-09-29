@@ -141,7 +141,7 @@ class AppliedTensor(sympy.Symbol):
 
 
 
-### Here be unittest ###
+##################### Here be unittest #####################
 import unittest
 
 class TestTensor(unittest.TestCase):

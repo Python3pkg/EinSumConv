@@ -2,7 +2,7 @@ import sympy
 import tensor
 
 '''
-This module re-express mathematicla epressions as list that are sutible for doing index operations.
+This module re-express mathematicla epressions as lists that are sutible for doing index operations.
 lists.py respect comutation relations by always remember the possition of a tensor in the original expression
 
 

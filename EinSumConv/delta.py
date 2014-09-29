@@ -36,24 +36,56 @@ dim can be overrided in spesific calculations
 
 
 
-
+global dim
 dim = 3
+
+global indexRange
+indexRange = [1, 2, 3]
 
 class Delta(tensor.AppliedTensor):
     pass
 
 def setDim(newDim):
+    '''Sets number of dimensions'''
     global dim
     dim = newDim
+    if not len(indexRange) == dim:
+        setIdexRange(range(1,1+dim)
 
 def getDim():
+    '''returns number of dimensions'''
     return dim
 
+def setIndexRange(newIndexRange)
+    '''Sets what values of indecis to be formaly summed over.
+       e.g. in 3D vecor calculations: indexRange = [1,2,3]
+       e.g. in relativistic calculations: indexRange = [0,1,2,3]'''
+    global indexRange
+    indexRange = newIndexRange
+    dim = len(indexRange)
+    setDim(dim)
+    if (not isinstance(indexRange[0], (int, sympy.Integer))
+            or not isinstance(indexRange[0], (int, sympy.Integer))
+            or not range(indexRange[0],indexRange[dim-1]+1) == indexRange):
+        return "Warning: str(indexRange) is a verry bad indexRange"
 
-def contractOneDelta(factorList, **tempDim):
-    if 'dim' in tempDim:
-        dim = tempDim['dim']
+
+getTempDimAndIndexRange(**tempOverride)
+    if 'dim' in tempOverride:
+        dim = tempOverride['dim']
     else: dim = getDim()
+    if 'indexRange' in tempOverride:
+        indexRange = tempOverride['indexRange']
+    else: indexRange = getIndexRange()
+    if not dim == len(indexRange):
+        raise TypeError(indexRange must have length dim)
+    return dim, indexRange
+
+
+
+def contractOneDelta(factorList, **tempOverride):
+
+    dim, indexRange = getTempDimAndIndexRange(**tempOverride)
     
     newFactorList=list(factorList)
     for (i,D) in enumerate(factorList):
@@ -65,8 +97,7 @@ def contractOneDelta(factorList, **tempDim):
         d1,d2 = D.index
         if not (tensor.isAllowedDummyIndex(d1)
                 or tensor.isAllowedDummyIndex(d2)):
-            if (isinstance(d1,(sympy.Integer,int)) 
-                    and isinstance(d2,(sympy.Integer,int)) ):
+            if (d1 in indexRagne) and (d2 in indexRange):
                 if d1==d2: newFactorList[i]=1
                 else: newFactorList[i]=0    
                 return newFactorList
@@ -129,7 +160,7 @@ def contractDeltas(exp, *arg, **kw):
     return sympy.Add(*[ sympy.Mul(*factorList) for factorList in newTermList ] )
 
 
-### Here be unittest ###
+##################### Here be unittest #####################
 import unittest
 
 class TestDelta(unittest.TestCase):

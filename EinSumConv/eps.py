@@ -1,56 +1,87 @@
 import delta
 import tensor
-import sympy
-
-
-'''
-This module is ment for dim == 3
-'''
 
 
 
-class Eps(tensor.AppliedTensor):
-    pass
+
+def oddEven(num):
+    if num%2: return -1
+    return 1
+        
+
+def permute_circular(theList):
+    perms = []
+    for i in range(len(theList)):
+        perms.append(list(theList))
+        theList.insert(0,theList.pop())
+    return perms
+    
+
+def permute_all(theList):
+    lenList = len(theList)
+    if lenList < 2:
+        return [{'perm':theList,'parity':1}]
+    oddEvenList = oddEven(lenList)
+    perms=[]
+    for (pos,obj) in enumerate(theList):
+        short = theList[0:pos]+theList[pos+1:lenList]
+        oddEvenPos = oddEven(pos+1)
+        for perm in permute_all(short):
+            perm['perm'].append(obj)
+            perm['parity'] *= oddEvenList * oddEvenPos
+            perms.append(perm)
+    return perms
+        
+
+def epsAsDeltas(eps, **tempOverride):
+
+    indexRange = delta.getTempDimAndIndexRange(**tempOverride)[1]
+
+    if not isinstance(eps,Eps)
+        raise TypeError('Error: input must be an Eps(*indecis)')
+    termList=[]
+    for perm in permute_all(eps.index):
+        factorList=[ perm['parity'] ]
+        for (pos,index) in enumerate(perm['perm']):
+            factorList.append( delta.Delta(pos+1,index) )
+        termList.append(Mul(*factorList))  
+    return Add(*termList)
 
 
-def evalTwoEps(eps,ePS):
-    for i,j,k in [(eps.index[0], eps.index[1], eps.index[2]),
-                  (eps.index[1], eps.index[2], eps.index[0]),
-                  (eps.index[2], eps.index[0], eps.index[1])]: 
-        for I,J,K in [(ePS.index[0], ePS.index[1], ePS.index[2]),
-                      (ePS.index[1], ePS.index[2], ePS.index[0]),
-                      (ePS.index[2], ePS.index[0], ePS.index[1])]:
-            if not i==I and tensor.isAllowedDummyIndex(i): 
-                continue
-            return delta.contractDeltas(
-                delta.Delta(j,J)*delta.Delta(k,K)
-                -delta.Delta(j,K)*delta.Delta(k,J),
-                dim=3)
-    return None
+
+def allEpsAsDeltas(exp **kw):
+    if isinstance(exp,Eps):
+        return epsAsDeltas(exp, **kw)
+    if not hasattr(exp,'args'):
+        return exp
+    return type(exp)(*[allEpsAsDeltas(arg, **kw) for arg in exp.args])
+    
+
+def simplify_OneEps(eps, evalLevel=2, **tempOverride):
+    '''Takes an instance of Eps and tries to simplify. Returns 0 if any two indecis are equal. Rewrite eps as Deltas if the number of loose idecis (not in indexRange) of eps is equal to or less than evalLevel.'''
+    indexRange = delta.getTempDimAndIndexRange(**tempOverride)[1]
+    if not isinstance(eps,Eps)
+        raise TypeError('Error: input must be an Eps(*indecis)')
+    ints = 0
+    for (pos,ind) in enumerate(eps.index):
+        if ind in eps.index[ind+1:]:
+            return 0
+        if ind in indexRange
+            if ind>len(eps.index) or ind<1
+            ints += 1
+    if len(eps.index) - ints > evalLevel
+        return eps
+    return delta.contractDeltas(epsAsDeltas(eps, **tempOverride), **tempOverride)
+        
 
 
-
-def evalOneEps(eps):
-    e1,e2,e3 = eps.index
-    if e1==e2 or e2==e3 or e3==e1:
-        return 0    
-    for i,j,k in [(e1,e2,e3),
-                  (e2,e3,e1),
-                  (e3,e1,e2)]: 
-        for I,J,K in [(1,2,3),
-                      (2,3,1),
-                      (3,1,2)]:
-            if not i==I: continue
-            return delta.contractDeltas(
-                delta.Delta(j,J)*delta.Delta(k,K)
-                -delta.Delta(j,K)*delta.Delta(k,J),
-                dim=3)
  
 
 
-### Here be unittest ###
+##################### Here be unittest #####################
 import unittest
 from delta import Delta, getDim, setDim
+import sympy
 
 
 class TestEps(unittest.TestCase):
@@ -65,7 +96,7 @@ class TestEps(unittest.TestCase):
         self.assertEqual(evalTwoEps(Eps(1,a,b),Eps(1,a,b)), 6)
         setDim(tempDim)
 
-    def test_evaOneEsps(self):
+    def test_evaOneEps(self):
         a,b,c = sympy.symbols('a,b,c')
         self.assertEqual(evalOneEps(Eps(1,a,b)),
                 Delta(a,2)*Delta(b,3)-Delta(a,3)*Delta(b,2) )
@@ -74,7 +105,7 @@ class TestEps(unittest.TestCase):
         self.assertEqual(evalOneEps(Eps(a,a,b)), 0)
         self.assertEqual(evalOneEps(Eps(1,2,3)), 1)
 
-    def test_evaTwoEsps(self):
+    def test_evaTwoEps(self):
         a,b,c,d,e = sympy.symbols('a,b,c,d,e')
         self.assertEqual(evalTwoEps(Eps(1,a,b),Eps(1,a,b)), 6)
         self.assertEqual(evalTwoEps(Eps(a,b,c),Eps(d,e,a)), 

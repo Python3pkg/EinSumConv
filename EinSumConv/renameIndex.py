@@ -3,6 +3,8 @@ import lists
 import namingSymbols
 import sympy
 import findIndex
+import delta
+import eps
 
 
 
@@ -55,14 +57,19 @@ def subsIndex(exp,oldIndex,newIndex):
 
 
 
+def tensorSimplify(exp, **kw)
 
-def pdb_test():
-    f=sympy.Function('f')
-    t=tensor.Tensor('t')
-    tf=tensor.TensorFunction('tf')
-    x,y,z = sympy. symbols('x,y,z')
-    exp = f(t(x), z, tf(x,y)(z, z, tf(z,z)(x,x) ) )
-    return renameDummyIndex(exp)
+    termList = delta.contractDeltas_termList(
+                    lists.makeTermList(
+                        sympy.expand(
+                            eps.allEpsAsDeltas(exp,**kw) ) ),
+                    **kw)
+    return rebuildAdd(
+                renameDummyIndex_TensorTermList(
+                    lists.makeTensorTermList( termList ) ),
+                termList)
+
+
                 
 
 
