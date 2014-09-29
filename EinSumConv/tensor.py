@@ -18,7 +18,7 @@ TensorFunction creates a teonsr that do take arguments
 >>> TF = TensorFunction('TF')
 >>> TF(*index)(*args)
 
-Both Tensor and TensorFuncton takes any number of index. Anytning can be an index but it is genarly recomended to use sympy.Dummy or sympy.Symbol.
+Both Tensor and TensorFuncton takes any number of index. Anytning can be put as an index but only indices of type sympy.Dummy or sympy.Symbol will be contracted over in varios functions.
 
 >>> a=sympy.Dymmy('a'); b=sympy.Dymmy('b')
 >>> isinstance(Tensor('T')(a,b), sympy.Symbol)
@@ -38,12 +38,15 @@ True
 
 
 def isTensor(exp):
+    '''Test if exp is a Tensor or TensorFunction. 
+       Only returns True for Tensor with index/indecis and TensorFunction with index/indecis and argument(s)
+       Only test the top type of exp, e.g. does not detect a derivative of a tensor as a tensor'''
     return (isinstance(exp,(AppliedTensor, 
                             AppliedAppliedTensorFunction)))
 
 
-# Givs the name of the tensor as a sring, without indices, without arguments.
 def tensorName(exp):  
+    '''Writes exp a sring as a sring, without indices, without arguments.'''
     if isinstance(exp,AppliedTensor):
         return type(exp).__name__
     if isinstance(type(exp),AppliedTensorFunction):
@@ -53,8 +56,9 @@ def tensorName(exp):
     return str(exp)
 
 
-# Givs the name of the tensor as a sring, without indices, with arguments.
+
 def longTensorName(exp):  
+    '''Writes exp a sring as a sring, without indices, with arguments.'''
     if isinstance(exp,AppliedTensor):
         return type(exp).__name__
     if isinstance(type(exp),AppliedTensorFunction):
@@ -70,8 +74,9 @@ def longTensorName(exp):
     return str(exp)
 
 
-# Defines what types of indices to be contracted over
+# Defines what types of indices that can be contracted over
 def isAllowedDummyIndex(ind):
+    '''Returns True if object is allowed to use as a dummy index to be summed over acording to Einsteins sumation convention'''
     return isinstance(ind, (sympy.Symbol, sympy.Dummy) )
 
 

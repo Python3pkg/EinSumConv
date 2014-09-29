@@ -1,3 +1,9 @@
+from tensor import isTensor, 
+                   tensorName, 
+                   longTensorName, 
+                   TensorFunction,
+                   Tensor
+
 
 
 def printStructure(x):
