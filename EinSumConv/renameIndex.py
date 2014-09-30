@@ -9,9 +9,8 @@ import eps
 
 
 
-def renameDummyIndex_TensorFactorList(tfl, indexGenerator):
+def renameDummyIndex_TensorFactorList(tfl, indexGenerator, oldDummys):
     newDummys = {}
-    oldDummys = findIndex.findIndex_TensorFactorList(tfl)['dummy']
     for (fPos,factor) in enumerate(tfl):
         for (iPos,ind) in enumerate(factor['indexList']):
             if not ind in oldDummys:
@@ -22,11 +21,15 @@ def renameDummyIndex_TensorFactorList(tfl, indexGenerator):
 
 
 def renameDummyIndex_TensorTermList(ttl):
+    oldIndex = findIndex.findIndex_TensorTermList(tfl)
+    oldDummys = oldIndex['dummy']
+    freeNames = [ind.name for ind in oldIndex['free'] ]
     indexList=[]
-    indexGenerator=namingSymbols.getNewDummys(List=indexList)
+    indexGenerator=namingSymbols.getNewDummys(List=indexList, forbiddenNames=freeNames)
     return [renameDummyIndex_TensorFactorList(
                 tfl,
-                namingSymbols.getNext(indexList,indexGenerator))
+                namingSymbols.getNext(
+                    indexList, indexGenerator, oldDummys, freeName) )
             for tfl in ttl]
 
 

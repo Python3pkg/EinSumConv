@@ -36,10 +36,12 @@ def getNames_a_aa_aaa():
             yield name
         N=N+1
   
-def getNewSymbols(List=[],names=None,cls=sympy.Symbol):
+def getNewSymbols(List=[], names=None, forbiddenNames=[] cls=sympy.Symbol):
     if names==None:
         names=getNames_a_aa_aaa()
     for name in names:
+        if name in forbiddenNames:
+            continue
         new=cls(name)
         List.append(new)
         yield new
