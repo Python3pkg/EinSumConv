@@ -4,6 +4,27 @@ import tensor
 
 
 
+
+
+def findIndex(exp):
+    '''
+    Finds all indecis in exp. Returns a dictionary with all idecis found.
+
+    'free': All free indecis, 
+            (not to be summed over acording to sumation convention)
+    'dummy': All dummy indecis, 
+             (too to be summed over acording to sumation convention)
+    'tooManny': Indecis that are found to many times, 
+                (i.e. more than twise in the same term if index is dummy, 
+                 and more than once in the same term if index is free)
+    'missingFree': Free indecis that are missing in one or more term.
+    'other': indecis that are not of type sympy.Dummy or sympy.Symbol
+    '''
+    return findIndex_TensorTermList(
+        lists.makeTensorTermList(
+            lists.makeTermList(exp)))
+
+
 def findIndex_TensorFactorList(tfl):
     freeIndex = set()
     dummyIndex = set()
@@ -50,11 +71,6 @@ def findIndex_TensorTermList(ttl):
             'missingFree':missingFree,
             'other':other}
 
-
-def findIndex(exp):
-    return findIndex_TensorTermList(
-        lists.makeTensorTermList(
-            lists.makeTermList(exp)))
 
 
 

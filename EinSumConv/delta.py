@@ -14,7 +14,6 @@ ContractDeltas contracts all idndices of all Deltas, that are sympy.Symbol or sy
 >>> T=tensor.Tensor('T')
 >>> a,b,c,d = sympy.symbols('a,b,c,d')
 >>> contractDeltas(Delta(a,c)*Detla(b,d)*T(c,d))
-T(a, b)
 
 dim is the number of dimensions of the indecis.
 >>> constracDeltas(Delta(a,a)) == dim
@@ -42,13 +41,7 @@ dim = 3
 global indexRange
 indexRange = [1, 2, 3]
 
-class Delta(tensor.AppliedTensor):
-    def __eq__(self,other):
-        if not type(self) == type(other): 
-            return False
-        return (self.index == other.index
-                or (self.index[0] == other.index [1] 
-                    and self.index[1] == other.index [0] ) )
+
     
 
 def setDim(newDim):
@@ -56,13 +49,13 @@ def setDim(newDim):
     global dim
     dim = newDim
     if not len(indexRange) == dim:
-        setIdexRange(range(1,1+dim)
+        setIndexRange(range(1,1+dim))
 
 def getDim():
     '''returns number of dimensions'''
     return dim
 
-def setIndexRange(newIndexRange)
+def setIndexRange(newIndexRange):
     '''Sets what values of indecis to be formaly summed over.
        e.g. in 3D vecor calculations: indexRange = [1,2,3]
        e.g. in relativistic calculations: indexRange = [0,1,2,3]'''
@@ -72,11 +65,14 @@ def setIndexRange(newIndexRange)
     setDim(dim)
     if (not isinstance(indexRange[0], (int, sympy.Integer))
             or not isinstance(indexRange[0], (int, sympy.Integer))
-            or not range(indexRange[0],indexRange[dim-1]+1) == indexRange):
+            or not range(indexRange[0],indexRange[dim-1]+1) == indexRange ):
         return "Warning: str(indexRange) is a verry bad indexRange"
 
+def getIndexRange():
+    return indexRange
 
-getTempDimAndIndexRange(**tempOverride)
+
+def getTempDimAndIndexRange(**tempOverride):
     if 'dim' in tempOverride:
         dim = tempOverride['dim']
     else: dim = getDim()
@@ -84,8 +80,22 @@ getTempDimAndIndexRange(**tempOverride)
         indexRange = tempOverride['indexRange']
     else: indexRange = getIndexRange()
     if not dim == len(indexRange):
-        raise TypeError(indexRange must have length dim)
+        raise TypeError('indexRange must have length dim')
     return dim, indexRange
+
+
+
+#FIXME
+class Delta(tensor.AppliedTensor):
+    def __eq__(self,other):
+        import pdb; pdb.set_trace()
+        if (type(self) == type(other)
+            and len(self.index) == 2 and len(other.index) == 2
+            and (self.index == other.index
+                 or (self.index[0] == other.index [1] 
+                     and self.index[1] == other.index [0] ) ) ):
+            return True
+        return AppliedTensor.__eq__(self,oter)
 
 
 
@@ -103,7 +113,7 @@ def contractOneDelta(factorList, **tempOverride):
         d1,d2 = D.index
         if not (tensor.isAllowedDummyIndex(d1)
                 or tensor.isAllowedDummyIndex(d2)):
-            if (d1 in indexRagne) and (d2 in indexRange):
+            if (d1 in indexRange) and (d2 in indexRange):
                 if d1==d2: newFactorList[i]=1
                 else: newFactorList[i]=0    
                 return newFactorList
@@ -212,9 +222,12 @@ class TestDelta(unittest.TestCase):
         setDim(4711)
         self.assertEqual(contractDeltas(Delta(a,a)),4711)
         setDim(tempDim)
-        self.assertEqual(contractDeltas(Delta(a,a),dim=13),13)
+        self.assertEqual(contractDeltas(
+                Delta(a,a),dim=13,indexRange=range(13)),13)
         setDim(tempDim)
         self.assertEqual(getDim(),tempDim)
+
+        
 
 if __name__ == '__main__':
     unittest.main()

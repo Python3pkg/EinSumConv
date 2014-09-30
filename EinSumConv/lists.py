@@ -23,22 +23,6 @@ factor refere to an element in a fl or tfl
 tensorFactor refere to an element in a tfl
 
 
-serchIndexInFactor(exp)
-# Find indecis on all levels in an expression.
-# indexList is a list of all indecis
-# indexDict is a dictionary that maches the possition in indexList with the possiton of that index in the expression.
-
-rebuildFactor(factor,indexList,indexDict)
-# Takes an expression, an indexDict as the one created by serchIndexInFactor, and list of (new?) indecis.
-# Builds a new expression, same as factor, but with the indecis in indexList
-rebuildFactor(factor,indexList,indexDict):
-
-sortTensorTermList(tensorTermList)
-# Organise a ttl in normal form as preparation for module renameInex
-
-printStructure(exp) 
-# gives a sring that showes the structure of an expression in sympy
-# (This was used to examine sympy, but is not acctually used in any EinSumConv functions)
 '''
 
 
@@ -69,6 +53,11 @@ def makeTermList(exp):
 
 
 def serchIndexInFactor(exp):
+    '''
+    Find indecis on all levels in an expression.
+    indexList is a list of all indecis
+    indexDict is a dictionary that maches the possition in indexList with the possiton of that index in the expression.
+    '''
     def serch(exp,indexList,indexPos):
         indexDict = {}
         if tensor.isTensor(exp):
@@ -115,6 +104,7 @@ def rebuildFactor(oldFactor,tensorFactor):
 
 
 def withNewIndex(factor, indexDict, indexList):
+    'Takes an expression, an indexDict as the one created by serchIndexInFactor, and list of (new?) indecis. Builds a new expression, same as factor, but with the indecis in indexList'
     if tensor.isTensor(factor): 
         factor = factor.withNewIndex(
             *[indexList[i] for i in indexDict['index'] ])
@@ -142,6 +132,7 @@ def rebuildAdd(tensorTermList,TermList):
 
 
 def sortTensorTermList(tensorTermList):
+    'Organise a ttl in normal form as preparation for module renameInex'
     for tensorFactorList in tensorTermList:
         tensorFactorList.sort(comprTensorsInList)
         
