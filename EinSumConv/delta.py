@@ -75,11 +75,11 @@ def getIndexRange():
 def getTempDimAndIndexRange(**tempOverride):
     if 'dim' in tempOverride:
         dim = tempOverride['dim']
-            if 'indexRange' in tempOverride:
-                indexRange = tempOverride['indexRange']
-                if not dim == len(indexRange):
-                    raise TypeError('indexRange must have length dim')
-            else: indexRange = range(1,dim+1)
+        if 'indexRange' in tempOverride:
+            indexRange = tempOverride['indexRange']
+            if not dim == len(indexRange):
+                raise TypeError('indexRange must have length dim')
+        else: indexRange = range(1,dim+1)
     elif 'indexRange' in tempOverride:
         indexRange = tempOverride['indexRange']
         dim = len(indexRange)
@@ -105,9 +105,7 @@ class Delta(tensor.AppliedTensor):
 
 
 def contractOneDelta(factorList, **tempOverride):
-
     dim, indexRange = getTempDimAndIndexRange(**tempOverride)
-    
     newFactorList=list(factorList)
     for (i,D) in enumerate(factorList):
         if not isinstance(D,Delta):
@@ -152,6 +150,9 @@ def contractOneDelta(factorList, **tempOverride):
 
 
 def deltaReplace(theList,d1,d2):
+    '''Replace index d1 with d2 or d2 with d1 in theList, if possible.
+       Only replace if the index that is replaced is an allowed dummy index
+       return True if replacement was made, replace False otherwise.'''
     for (i,obj) in enumerate(theList):
         if tensor.isAllowedDummyIndex(d1) and obj==d1:
             theList[i]=d2
@@ -160,7 +161,6 @@ def deltaReplace(theList,d1,d2):
             theList[i]=d1
             return True
     return False
-
 
 
 def contractDeltas_factorList(factorList, *arg, **kw):
@@ -176,6 +176,7 @@ def contractDeltas_termList(termList, *arg, **kw):
 
 
 def contractDeltas(exp, *arg, **kw):
+    '''cotracts all Deltas as far as possible'''
     termList = lists.makeTermList(exp)
     newTermList = contractDeltas_termList(termList, *arg, **kw)
     return sympy.Add(*[ sympy.Mul(*factorList) for factorList in newTermList ] )
@@ -226,9 +227,8 @@ class TestDelta(unittest.TestCase):
         self.assertEqual(contractDeltas(Delta(a,a)),4)
         setDim(4711)
         self.assertEqual(contractDeltas(Delta(a,a)),4711)
-        setDim(tempDim)
-        self.assertEqual(contractDeltas(
-                Delta(a,a),dim=13,indexRange=range(13)),13)
+        self.assertEqual(contractDeltas(Delta(a,a),dim=13) ,13)
+        self.assertEqual(contractDeltas(Delta(a,a),indexRange=range(13) ) ,13)
         setDim(tempDim)
         self.assertEqual(getDim(),tempDim)
 
