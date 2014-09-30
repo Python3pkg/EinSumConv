@@ -40,7 +40,7 @@ def permute_all(theList):
     return perms
         
 
-def epsAsDeltas(eps, **tempOverride):
+def oneEpsAsDeltas(eps, **tempOverride):
     '''Takes an instance of Eps and rewrites it as Deltas'''
     indexRange = delta.getTempDimAndIndexRange(**tempOverride)[1]
     if not isinstance(eps,Eps):
@@ -55,13 +55,13 @@ def epsAsDeltas(eps, **tempOverride):
 
 
 
-def allEpsAsDeltas(exp, **kw):
+def epsAsDeltas(exp, **kw):
     '''Takes an epression, and rewrites all Eps as Deltas'''
     if isinstance(exp,Eps):
-        return epsAsDeltas(exp, **kw)
+        return oneEpsAsDeltas(exp, **kw)
     if not hasattr(exp,'args'):
         return exp
-    return type(exp)(*[allEpsAsDeltas(arg, **kw) for arg in exp.args])
+    return type(exp)(*[epsAsDeltas(arg, **kw) for arg in exp.args])
     
 
 def simplify_OneEps(eps, evalLevel=2, **tempOverride):

@@ -1,6 +1,15 @@
-from tensor import isTensor, tensorName, longTensorName, TensorFunction, Tensor
+from delta import setDim, getDim, setIndexRange, getIndexRange,
+from eps import Eps, permute_circular, permute_all, epsAsDeltas
 from findIndex import findIndex
-from renameIndex import tensorSimplify, subsIndex
+
+from namingSymbols import getNames_aa_ab_ac, getNames_a_aa_aaa, getNewSymbols, getNewSymbols, getNext
+from renameIndex import tensorSimplify, subsIndex, renameDummyIndex
+ Delta, contractDeltas,
+from tensor import isTensor, tensorName, longTensorName, TensorFunction, Tensor
+
+
+from eps import Eps, permute_circular, permute_all, epsAsDeltas
+
 
 
 def printStructure(x):

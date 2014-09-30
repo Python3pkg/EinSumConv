@@ -76,7 +76,7 @@ def tensorSimplify(exp, **kw)
     termList = delta.contractDeltas_termList(
                     lists.makeTermList(
                         sympy.expand(
-                            eps.allEpsAsDeltas(exp,**kw) ) ),
+                            eps.epsAsDeltas(exp,**kw) ) ),
                     **kw)
     return rebuildAdd(
                 renameDummyIndex_TensorTermList(
