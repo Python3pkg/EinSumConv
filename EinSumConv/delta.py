@@ -75,12 +75,17 @@ def getIndexRange():
 def getTempDimAndIndexRange(**tempOverride):
     if 'dim' in tempOverride:
         dim = tempOverride['dim']
-    else: dim = getDim()
-    if 'indexRange' in tempOverride:
+            if 'indexRange' in tempOverride:
+                indexRange = tempOverride['indexRange']
+                if not dim == len(indexRange):
+                    raise TypeError('indexRange must have length dim')
+            else: indexRange = range(1,dim+1)
+    elif 'indexRange' in tempOverride:
         indexRange = tempOverride['indexRange']
-    else: indexRange = getIndexRange()
-    if not dim == len(indexRange):
-        raise TypeError('indexRange must have length dim')
+        dim = len(indexRange)
+    else:
+        dim = getDim()
+        indexRange = getIndexRange()
     return dim, indexRange
 
 
@@ -191,7 +196,7 @@ class TestDelta(unittest.TestCase):
         self.x, self.y, self.z = sympy.symbols('x,y,z')
         self.f = sympy.Function('f')
 
-    def test_Contractdeltas(self):
+    def test_ContractDeltas(self):
         t=self.t; tf=self.tf; a=self.a; b=self.b; c=self.c; d=self.d
         x=self.x; y=self.y; z=self.z; f=self.f
 
