@@ -43,7 +43,13 @@ global indexRange
 indexRange = [1, 2, 3]
 
 class Delta(tensor.AppliedTensor):
-    pass
+    def __eq__(self,other):
+        if not type(self) == type(other): 
+            return False
+        return (self.index == other.index
+                or (self.index[0] == other.index [1] 
+                    and self.index[1] == other.index [0] ) )
+    
 
 def setDim(newDim):
     '''Sets number of dimensions'''
