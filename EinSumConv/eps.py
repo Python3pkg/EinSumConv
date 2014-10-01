@@ -2,6 +2,13 @@ import delta
 import tensor
 
 
+'''
+Eps is the Levi-Civita symbol, also known as the maximaly antisymetric tensor.
+
+Make sure that the number of indecis matches the number of dimensions.
+'''
+
+
 
 class Eps(tensor.AppliedTensor):
     pass
@@ -42,9 +49,11 @@ def permute_all(theList):
 
 def oneEpsAsDeltas(eps, **tempOverride):
     '''Takes an instance of Eps and rewrites it as Deltas'''
-    indexRange = delta.getTempDimAndIndexRange(**tempOverride)[1]
+    dim, indexRange = delta.getTempDimAndIndexRange(**tempOverride)
     if not isinstance(eps,Eps):
         raise TypeError('Error: input must be an Eps(*indecis)')
+    if not len(eps.index)==dim:
+        raise TypeError('Error: Eps must have dim number of indices')
     termList=[]
     for perm in permute_all(eps.index):
         factorList=[ perm['parity'] ]

@@ -26,4 +26,5 @@ def printStructure(x):
 + Write unittest for EVERYTHING! 
 + Handle symetric and anti-symetric tensors
 + Fix pretty print
++ Leran about sympy 'assumptions0' and see how to conect to this
 '''
