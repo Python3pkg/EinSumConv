@@ -8,4 +8,7 @@ share
 *.pyc
 .ipynb_checkpoints
 *.ipynb
+*.egg-info
+build
+dist
 
