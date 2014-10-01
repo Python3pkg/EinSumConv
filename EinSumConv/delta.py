@@ -90,8 +90,10 @@ def getTempDimAndIndexRange(**tempOverride):
 
 
 
-#FIXME
+
 class Delta(tensor.AppliedTensor):
+
+    #FIXME
     def __eq__(self,other):
         import pdb; pdb.set_trace()
         if (type(self) == type(other)
