@@ -93,7 +93,14 @@ def getTempDimAndIndexRange(**tempOverride):
 
 class Delta(tensor.AppliedTensor):
 
-    #FIXME
+    #FIXME does not raise exeption, why?
+    def __new__(cls, *index):
+        import pdb; pdb.set_trace()
+        if not len(index)==2:
+            raise TypeError('Error: delta must have precisly two indices')
+        return tensor.AppliedTensor.__new__(cls, *index)
+
+    #FIXME D(a,b) == D(b,a) is False, why?
     def __eq__(self,other):
         import pdb; pdb.set_trace()
         if (type(self) == type(other)
