@@ -1,5 +1,6 @@
 import delta
 import tensor
+import sympy
 
 
 '''
@@ -59,8 +60,8 @@ def oneEpsAsDeltas(eps, **tempOverride):
         factorList=[ perm['parity'] ]
         for (pos,index) in enumerate(perm['perm']):
             factorList.append( delta.Delta(pos+1,index) )
-        termList.append(Mul(*factorList))  
-    return Add(*termList)
+        termList.append(sympy.Mul(*factorList))  
+    return sympy.Add(*termList)
 
 
 
@@ -68,7 +69,7 @@ def epsAsDeltas(exp, **kw):
     '''Takes an epression, and rewrites all Eps as Deltas'''
     if isinstance(exp,Eps):
         return oneEpsAsDeltas(exp, **kw)
-    if not hasattr(exp,'args'):
+    if not getattr(exp,'args',()):
         return exp
     return type(exp)(*[epsAsDeltas(arg, **kw) for arg in exp.args])
     

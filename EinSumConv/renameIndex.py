@@ -21,23 +21,24 @@ def renameDummyIndex_TensorFactorList(tfl, indexGenerator, oldDummys):
 
 
 def renameDummyIndex_TensorTermList(ttl):
-    oldIndex = findIndex.findIndex_TensorTermList(tfl)
+    oldIndex = findIndex.findIndex_TensorTermList(ttl)
     oldDummys = oldIndex['dummy']
     freeNames = [ind.name for ind in oldIndex['free'] ]
     indexList=[]
     indexGenerator=namingSymbols.getNewDummys(List=indexList, forbiddenNames=freeNames)
-    return [renameDummyIndex_TensorFactorList(
-                tfl,
-                namingSymbols.getNext(indexList, indexGenerator) 
-                oldDummys)
-            for tfl in ttl]
+    for tfl in ttl:
+        renameDummyIndex_TensorFactorList(
+            tfl,
+            namingSymbols.getNext(indexList, indexGenerator),
+            oldDummys)
+           
 
 
 def renameDummyIndex(exp):
     'renames all Dummy indecis in the expression, in a clever way'
     tl=lists.makeTermList(exp)
     ttl=lists.makeTensorTermList(tl)
-    sortTensorTermList(ttl)
+    lists.sortTensorTermList(ttl)
     renameDummyIndex_TensorTermList(ttl)
     return lists.rebuildAdd(ttl,tl)
 
@@ -50,26 +51,26 @@ def subsIndex(exp,oldIndex,newIndex):
     If oldIndex is not a sring, every index equal to oldIndex will be replaced.
     '''
     if not tensor.isTensor(exp):
-        if not getattr(exp, 'args', []):
+        if not getattr(exp, 'args', False):
             return exp
         return type(exp)(*[subsIndex(arg,oldIndex,newIndex) 
                            for arg in exp.args])
     newIndexList = []
     for ind in exp.index:
-        if ind==oldIndex or str(ind)==oldIndex:
+        if ind==oldIndex or getattr(ind,'name',None)==oldIndex:
             newIndexList.append(newIndex)
         else:
             newIndexList.append(ind)
-    if not hasattr(exp,'args'):
+    if not getattr(exp,'args',False):
         return exp.withNewIndex(*newIndexList)
     return type(type(exp))(*newIndexList)(
         *[subsIndex(arg,oldIndex,newIndex) for arg in exp.args])
 
 
 
-def tensorSimplify(exp, **kw)
+def tensorSimplify(exp, **kw):
     '''
-    tyres to simplify a tensor expresion by writing it on a normal form
+    Tyres to simplify a tensor expresion by writing it on a normal form
     If you do not like the result you can try simplifying by had using
     e.g subsIndex, contractDeltas, renameDummyIndex, epsAsDeltas, allEpsAsDeltas
     '''
@@ -78,10 +79,10 @@ def tensorSimplify(exp, **kw)
                         sympy.expand(
                             eps.epsAsDeltas(exp,**kw) ) ),
                     **kw)
-    return rebuildAdd(
-                renameDummyIndex_TensorTermList(
-                    lists.makeTensorTermList( termList ) ),
-                termList)
+    ttl = lists.makeTensorTermList(termList)
+    lists.sortTensorTermList(ttl)
+    renameDummyIndex_TensorTermList(ttl)
+    return lists.rebuildAdd(ttl, termList)
 
 
                 
@@ -89,7 +90,7 @@ def tensorSimplify(exp, **kw)
 ##################### Here be unittest #####################
 import unittest
 
-class TestFindIndex(unittest.TestCase):
+class TestRenameIndex(unittest.TestCase):
 
     def setUp(self):
         pass
@@ -98,7 +99,7 @@ class TestFindIndex(unittest.TestCase):
         f=sympy.Function('f')
         t=tensor.Tensor('t')
         tf=tensor.TensorFunction('tf')
-        a=sympy.Dummy(a)
+        a=sympy.Dummy('a')
         b,c,d=sympy.symbols('b,c,d')
         exp=tf(a,b,c)( t(a,b), b, f(a) )
         self.assertEqual(subsIndex(exp,'a',d),
@@ -112,7 +113,7 @@ class TestFindIndex(unittest.TestCase):
     def test_renameDummyIndex(self):
         A=tensor.Tensor('A')
         B=tensor.Tensor('B')
-        a=sympy.Dummy(a)
+        a=sympy.Dummy('a')
         b,c,d=sympy.symbols('b,c,d')
         exp = A(a,b,c)*B(b,c) - A(a,c,d)*B(c,d)
         self.assertEqual(renameDummyIndex(exp),0)
@@ -121,19 +122,19 @@ class TestFindIndex(unittest.TestCase):
         A=tensor.Tensor('A')
         B=tensor.Tensor('B')
         C=tensor.Tensor('C')
-        a=sympy.Dummy(a)
+        a=sympy.Dummy('a')
         b,c,d=sympy.symbols('b,c,d')
-        tempDim=getDim()
-        setDim(3)
+        tempDim=delta.getDim()
+        delta.setDim(3)
         self.assertEqual(tensorSimplify(eps.Eps(a,a,c) ),0)
         self.assertEqual(tensorSimplify(eps.Eps(a,b,c)*eps.Eps(c,b,a) ),-6)
-        self.assertEqual(tensorSimplify(Eps(a,b,c)*A(a)*B(b)*C(c) ),
+        self.assertEqual(tensorSimplify(eps.Eps(a,b,c)*A(a)*B(b)*C(c) ),
                           ( A(1)*B(2)*C(3) - A(1)*B(3)*C(2)
                            +A(2)*B(3)*C(1) - A(2)*B(1)*C(3)
-                           +A(3)*B(1)*C(2) - A(3)*B(2)*C(1) )
+                           +A(3)*B(1)*C(2) - A(3)*B(2)*C(1) ) )
         exp = A(a,b,c)*B(b,c) - A(a,c,d)*B(c,d)
         self.assertEqual(tensorSimplify(exp),0)
-        setDim(tempDim)
+        delta.setDim(tempDim)
 
 if __name__ == '__main__':
     unittest.main()

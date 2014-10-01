@@ -1,7 +1,7 @@
 import sympy
 
 def getAllTheLetters(begin='a', end='z'):
-    'Generates all letters a-z as strings
+    'Generates all letters a-z as strings'
     beginNum = ord(begin)
     endNum = ord(end)
     for number in xrange(beginNum, endNum+1):
@@ -39,7 +39,7 @@ def getNames_a_aa_aaa():
             yield name
         N=N+1
   
-def getNewSymbols(List=[], names=None, forbiddenNames=[] cls=sympy.Symbol):
+def getNewSymbols(List=[], names=None, forbiddenNames=[], cls=sympy.Symbol):
     'generates new instances of cls with names from names and puts them in List'
     if names==None:
         names=getNames_a_aa_aaa()
@@ -50,9 +50,9 @@ def getNewSymbols(List=[], names=None, forbiddenNames=[] cls=sympy.Symbol):
         List.append(new)
         yield new
 
-def getNewSymbols(*arg, **kw):
+def getNewDummys(*arg, **kw):
     'generates new sympy.Dummy'
-	return getNewSymbols( cls=sympy.Dummy, *arg, **kw)
+    return getNewSymbols( cls=sympy.Dummy, *arg, **kw)
 
 
 

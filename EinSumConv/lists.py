@@ -162,7 +162,7 @@ def indexPathern(index):
 
 
 def printStructure(exp):
-    if getattr(exp, 'args', []):
+    if getattr(exp, 'args', False):
         return (type(exp).__name__ 
                 + "(" 
                 + ", ".join([printStructure(arg) for arg in exp.args]) 

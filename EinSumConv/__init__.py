@@ -1,10 +1,9 @@
-from delta import setDim, getDim, setIndexRange, getIndexRange,
+from delta import setDim, getDim, setIndexRange, getIndexRange, Delta, contractDeltas
 from eps import Eps, permute_circular, permute_all, epsAsDeltas
 from findIndex import findIndex
 
 from namingSymbols import getNames_aa_ab_ac, getNames_a_aa_aaa, getNewSymbols, getNewSymbols, getNext
 from renameIndex import tensorSimplify, subsIndex, renameDummyIndex
- Delta, contractDeltas,
 from tensor import isTensor, tensorName, longTensorName, TensorFunction, Tensor
 
 
