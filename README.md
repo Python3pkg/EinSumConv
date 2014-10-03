@@ -10,3 +10,7 @@ In this version you can create tensors that may or may not depend on some argume
 In the near future, I want EinSumConv to handle symmetric tensors (e.g. recognize that T(a,b)==T(b,a) is True iff T is symetric). And I want to adjust sympys pretty_print for the purpose of EinSumConv.
 
 In a slightly further away future, I want to implement GR calculations with upper and lower indices. And also index notation of derivatives.
+
+# Installation
+
+    pip install EinSumConv
