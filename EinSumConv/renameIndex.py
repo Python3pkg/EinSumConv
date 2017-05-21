@@ -1,10 +1,10 @@
-import tensor
-import lists
-import namingSymbols
+from . import tensor
+from . import lists
+from . import namingSymbols
 import sympy
-import findIndex
-import delta
-import eps
+from . import findIndex
+from . import delta
+from . import eps
 
 
 
@@ -16,7 +16,7 @@ def renameDummyIndex_TensorFactorList(tfl, indexGenerator, oldDummys):
             if not ind in oldDummys:
                 continue
             if not ind in newDummys:
-                newDummys[ind]=indexGenerator.next()
+                newDummys[ind]=next(indexGenerator)
             tfl[fPos]['indexList'][iPos] = newDummys[ind]
 
 

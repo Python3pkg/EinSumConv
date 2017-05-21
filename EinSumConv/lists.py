@@ -1,5 +1,5 @@
 import sympy
-import tensor
+from . import tensor
 
 '''
 This module re-express mathematicla epressions as lists that are sutible for doing index operations.
@@ -174,19 +174,19 @@ def printStructure(exp):
 def printList(lis):
     l=len(lis)
     if l>2:
-        print lis
+        print(lis)
         return None
-    print '[ ' + str(lis[0]) + ' ,'
+    print('[ ' + str(lis[0]) + ' ,')
     for i in range(1,l-1):
-        print '  ' + str(lis[i]) + ' ,'
-    print '  ' + str(lis[l-1]) + ' ]'
+        print('  ' + str(lis[i]) + ' ,')
+    print('  ' + str(lis[l-1]) + ' ]')
     return None
     
 
 def flatten(x):
     result = []
     for el in x:
-        if hasattr(el, "__iter__") and not isinstance(el, basestring):
+        if hasattr(el, "__iter__") and not isinstance(el, str):
             result.extend(flatten(el))
         else:
             result.append(el)

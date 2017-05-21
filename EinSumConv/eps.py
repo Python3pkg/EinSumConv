@@ -1,5 +1,5 @@
-import delta
-import tensor
+from . import delta
+from . import tensor
 import sympy
 
 
@@ -98,7 +98,7 @@ def simplify_OneEps(eps, evalLevel=2, **tempOverride):
 
 ##################### Here be unittest #####################
 import unittest
-from delta import Delta, getDim, setDim
+from .delta import Delta, getDim, setDim
 import sympy
 
 

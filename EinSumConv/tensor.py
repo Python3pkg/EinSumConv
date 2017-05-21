@@ -97,9 +97,7 @@ class TensorFunction(BasicMeta):
 
 
 #FIXME use sympy.core.compatibility.with_metaclass or similar
-class AppliedTensorFunction(FunctionClass):
-    __metaclass__ = TensorFunction
-
+class AppliedTensorFunction(FunctionClass, metaclass=TensorFunction):
     @cacheit
     def __new__(mcl, *index, **kw):
         name = mcl.__name__ + str(index)
@@ -123,9 +121,7 @@ class Tensor(ManagedProperties):
 
 
 #FIXME use sympy.core.compatibility.with_metaclass or 
-class AppliedTensor(sympy.Symbol):
-    __metaclass__ = Tensor
-
+class AppliedTensor(sympy.Symbol, metaclass=Tensor):
     @cacheit
     def __new__(cls, *index, **kw):
         name = cls.__name__ + str(index)

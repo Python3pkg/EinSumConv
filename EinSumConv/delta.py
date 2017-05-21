@@ -1,5 +1,5 @@
-import tensor
-import lists
+from . import tensor
+from . import lists
 import sympy
 
 
@@ -49,7 +49,7 @@ def setDim(newDim):
     global dim
     dim = newDim
     if not len(indexRange) == dim:
-        setIndexRange(range(1,1+dim))
+        setIndexRange(list(range(1,1+dim)))
 
 def getDim():
     '''returns number of dimensions'''
@@ -65,7 +65,7 @@ def setIndexRange(newIndexRange):
     setDim(dim)
     if (not isinstance(indexRange[0], (int, sympy.Integer))
             or not isinstance(indexRange[0], (int, sympy.Integer))
-            or not range(indexRange[0],indexRange[dim-1]+1) == indexRange ):
+            or not list(range(indexRange[0],indexRange[dim-1]+1)) == indexRange ):
         return "Warning: str(indexRange) is a verry bad indexRange"
 
 def getIndexRange():
@@ -79,7 +79,7 @@ def getTempDimAndIndexRange(**tempOverride):
             indexRange = tempOverride['indexRange']
             if not dim == len(indexRange):
                 raise TypeError('indexRange must have length dim')
-        else: indexRange = range(1,dim+1)
+        else: indexRange = list(range(1,dim+1))
     elif 'indexRange' in tempOverride:
         indexRange = tempOverride['indexRange']
         dim = len(indexRange)
@@ -220,7 +220,7 @@ class TestDelta(unittest.TestCase):
         setDim(4711)
         self.assertEqual(contractDeltas(Delta(a,a)),4711)
         self.assertEqual(contractDeltas(Delta(a,a),dim=13) ,13)
-        self.assertEqual(contractDeltas(Delta(a,a),indexRange=range(13) ) ,13)
+        self.assertEqual(contractDeltas(Delta(a,a),indexRange=list(range(13)) ) ,13)
         setDim(tempDim)
         self.assertEqual(getDim(),tempDim)
 

@@ -4,7 +4,7 @@ def getAllTheLetters(begin='a', end='z'):
     'Generates all letters a-z as strings'
     beginNum = ord(begin)
     endNum = ord(end)
-    for number in xrange(beginNum, endNum+1):
+    for number in range(beginNum, endNum+1):
         yield chr(number)
         
 def getAllTheLetterCombinations(N=0):

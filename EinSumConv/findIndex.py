@@ -1,6 +1,6 @@
-import lists
+from . import lists
 import sympy
-import tensor
+from . import tensor
 
 
 
